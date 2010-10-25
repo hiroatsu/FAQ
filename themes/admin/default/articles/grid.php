@@ -45,6 +45,13 @@
 					</select>
 				</td>
 				<td>
+					<select name='a_site_id' id='a_site_id'>
+						<option value='0' selected>PC and Mobile</option>
+						<option value='1' selected>PC</option>
+						<option value='2'>Mobile</option>
+					</select>
+				</td>
+				<td>
 					<input type="submit" id="submit" value="<?php echo lang('kb_search'); ?> &#187;" class="button" />
 				</td>
 			</tr>
@@ -132,6 +139,9 @@
 					<?php echo lang('kb_display'); ?>
 					</a>
 				</th>
+				<th>
+					PC or Mobile
+				</th>
 				<th><?php echo lang('kb_actions'); ?></th>
 			</tr>
 			
@@ -159,6 +169,9 @@
 						echo '<span class="active">'.lang('kb_active').'</span>';
 					}
 					?>
+				</td>
+				<td>
+				<?php echo $this->core_events->trigger('modulearticles/grid', $item['article_id']); ?>
 				</td>
 				<td width="10%" nowrap="nowrap">
 					<a href="<?php echo site_url('article/'.$item['article_uri']); ?>" target="_blank"><img src="<?php echo base_url(); ?>images/page_show.png" border="0" alt="<?php echo lang('kb_show'); ?>" title="<?php echo lang('kb_show'); ?>" /></a>

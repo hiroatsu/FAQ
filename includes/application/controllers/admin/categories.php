@@ -150,6 +150,12 @@ class Categories extends Controller
 				'cat_order' => $this->input->post('cat_order', TRUE)
 			);
 			$var = $this->category_model->edit_category($id, $data);
+			// for management module extra param     
+			$param = array(
+				'site_id' => $this->input->post('site_id', TRUE),
+				'category_id' => $id
+			);
+			$this->core_events->trigger('modulecategory/edit',$param);
 			$this->revert('admin/categories/');
 		}
 	}
@@ -205,6 +211,12 @@ class Categories extends Controller
 				'cat_order' => $this->input->post('cat_order', TRUE)
 			);
 			$var = $this->category_model->add_category($data);
+			// for management module extra param     
+			$param = array(
+				'site_id' => $this->input->post('site_id', TRUE),
+				'category_id' => $var
+			);
+			$this->core_events->trigger('modulecategory/edit',$param);
 			$this->revert('admin/categories/');
 		}
 		
@@ -253,6 +265,8 @@ class Categories extends Controller
 		$id = (int) $this->uri->segment(4, 0);
 		$this->db->delete('categories', array('cat_id' => $id));
 		$this->core_events->trigger('categories/delete', $id);
+		//for management module
+		$this->core_events->trigger('modulecategory/delete', $id);
 		$this->revert('admin/categories/');
 	}
 	

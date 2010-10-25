@@ -128,7 +128,7 @@ class Articles extends Controller
 		$this->db->select('articles.article_id, article_uri, article_title, article_display, article_date, article_hits');
 		$this->db->from("articles");
 		$this->db->join('article2cat', 'articles.article_id = article2cat.article_id', 'left');
-		
+		$this->db->join('articles2fujisan', 'articles.article_id = articles2fujisan.article_id', 'left');
 		// User Level
 		if ($this->session->userdata('level') == 4)
 		{
@@ -154,6 +154,12 @@ class Articles extends Controller
 		{
 			$this->db->where('article_author', $this->input->post('a_author'));
 			$data['s_author'] = $this->input->post('a_author', TRUE);
+		}
+		//modification for management module
+		if($this->input->post('a_site_id') != 0)
+		{
+			$this->db->where('site_id', $this->input->post('a_site_id'));
+			$data['s_site_id'] = $this->input->post('a_site_id', TRUE);
 		}
 		if($this->input->post('cat') != 0)
 		{
@@ -357,6 +363,13 @@ class Articles extends Controller
 				if($continue)
 				{
 					$this->core_events->trigger('articles/edit', $id);
+                    //for management module extra param
+					$param = array(
+						'article_id' => $id, 
+						'site_id' => $this->input->post('site_id', TRUE)
+					);
+					$this->core_events->trigger('modulearticle/edit', $param);
+
 				    if (isset($_POST['save']) && $_POST['save']<>"")
 				    {
 				    	redirect('admin/articles/edit/'.$id);
@@ -431,6 +444,12 @@ class Articles extends Controller
 				//$this->tags_model->insert_tags($id, $tags);
 				$this->category_model->insert_cats($id, $cats);
 				$this->core_events->trigger('articles/add', $id);
+                //for management module extra param
+				$param = array(
+					'article_id' => $id, 
+					'site_id' => $this->input->post('site_id', TRUE)
+				);
+				$this->core_events->trigger('modulearticle/add', $param);
 				
 				if ($_FILES['userfile']['name'] != "") 
 				{
@@ -500,6 +519,8 @@ class Articles extends Controller
 		}
 		
 		$this->article_model->delete_article($id);
+		// for management module
+		$this->core_events->trigger('modulearticle/delete', $id);
 		$this->revert('admin/articles/');
 	}
 	
