@@ -25,8 +25,9 @@ class management_events
      $core_events->register('articles/add', $this, 'add_article_siteinfo');
      $core_events->register('articles/edit', $this, 'add_article_siteinfo');
      $core_events->register('articles/delete', $this, 'delete_articles2fujisan_by_id');
-     $core_events->register('modulearticles/grid', $this, 'show_siteinfo_on_articles');
      $core_events->register('modulecategories/grid', $this, 'show_siteinfo_on_categories');
+     $core_events->register('show_site_id_selection', $this, 'show_site_id_selection');
+     $core_events->register('show_siteinfo_on_articles', $this, 'show_siteinfo_on_articles');
 	}
 	
 	// ------------------------------------------------------------------------
@@ -69,22 +70,23 @@ class management_events
         $id = (int) $article_id;
         $CI->db->from('articles2fujisan')->where('article_id', $id);
         $query = $CI->db->get();
+		echo "<td>";
         if ($query->num_rows() > 0){
         	foreach ($query->result() as $row){
            		if( $row->site_id == 1){
-               	$SiteInfo = 'PC';
+               	echo 'PC';
           		}
           		if( $row->site_id == 2){
-               	$SiteInfo = 'MOBILE';
+               	echo 'MOBILE';
           		}
           		if( $row->site_id != 2 && $row->site_id != 1 ){
-               	$SiteInfo = 'N/A';
+               	echo 'N/A';
          		}
         	}
         }else{
-               	$SiteInfo = 'N/A';
+               	echo 'N/A';
         }
-	return $SiteInfo;
+		echo "</td>";
 	}
 
 	function add_article_siteinfo($id){
@@ -229,6 +231,20 @@ class management_events
         	}
 	 }
 	}
+
+
+    function show_site_id_selection(){
+	echo "<td>";
+	echo "<select name='a_site_id' id='a_site_id'>";
+	echo "<option value='0' selected>PC and Mobile</option>";
+	echo "<option value='1'>PC</option>";
+	echo "<option value='2'>Mobile</option>";
+	echo "</select>";
+	echo "</td>";	
+	}
+
+
+
 }
 
 /* End of file events.php */

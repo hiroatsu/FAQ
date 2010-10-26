@@ -44,13 +44,7 @@
 						<?php endforeach; ?>
 					</select>
 				</td>
-				<td>
-					<select name='a_site_id' id='a_site_id'>
-						<option value='0' selected>PC and Mobile</option>
-						<option value='1' selected>PC</option>
-						<option value='2'>Mobile</option>
-					</select>
-				</td>
+                <?php echo $this->core_events->trigger('show_site_id_selection'); ?>
 				<td>
 					<input type="submit" id="submit" value="<?php echo lang('kb_search'); ?> &#187;" class="button" />
 				</td>
@@ -170,9 +164,7 @@
 					}
 					?>
 				</td>
-				<td>
-				<?php echo $this->core_events->trigger('modulearticles/grid', $item['article_id']); ?>
-				</td>
+				<?php echo $this->core_events->trigger('show_siteinfo_on_articles', $item['article_id']); ?>
 				<td width="10%" nowrap="nowrap">
 					<a href="<?php echo site_url('article/'.$item['article_uri']); ?>" target="_blank"><img src="<?php echo base_url(); ?>images/page_show.png" border="0" alt="<?php echo lang('kb_show'); ?>" title="<?php echo lang('kb_show'); ?>" /></a>
 					&nbsp;
