@@ -363,13 +363,6 @@ class Articles extends Controller
 				if($continue)
 				{
 					$this->core_events->trigger('articles/edit', $id);
-                    //for management module extra param
-					$param = array(
-						'article_id' => $id, 
-						'site_id' => $this->input->post('site_id', TRUE)
-					);
-					$this->core_events->trigger('modulearticle/edit', $param);
-
 				    if (isset($_POST['save']) && $_POST['save']<>"")
 				    {
 				    	redirect('admin/articles/edit/'.$id);
@@ -444,12 +437,6 @@ class Articles extends Controller
 				//$this->tags_model->insert_tags($id, $tags);
 				$this->category_model->insert_cats($id, $cats);
 				$this->core_events->trigger('articles/add', $id);
-                //for management module extra param
-				$param = array(
-					'article_id' => $id, 
-					'site_id' => $this->input->post('site_id', TRUE)
-				);
-				$this->core_events->trigger('modulearticle/add', $param);
 				
 				if ($_FILES['userfile']['name'] != "") 
 				{
@@ -520,7 +507,7 @@ class Articles extends Controller
 		
 		$this->article_model->delete_article($id);
 		// for management module
-		$this->core_events->trigger('modulearticle/delete', $id);
+		$this->core_events->trigger('articles/delete', $id);
 		$this->revert('admin/articles/');
 	}
 	
