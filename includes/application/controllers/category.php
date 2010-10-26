@@ -56,6 +56,7 @@ class Category extends Controller
 	*/
 	function index($uri='')
 	{
+        if(	$this->core_events->trigger('viewcategory', $uri) == ""){
 		if($uri<>'' && $uri<>'index') 
 		{
 			$uri = $this->input->xss_clean($uri);
@@ -90,6 +91,7 @@ class Category extends Controller
 			$data['parents'] = $this->category_model->get_categories_by_parent(0);
 		}
 		$this->init_model->display_template('category', $data);
+		}
 	}
 	
 	// ------------------------------------------------------------------------

@@ -53,6 +53,7 @@ class All extends Controller
 	*/
 	function index()
 	{
+		if(	$this->core_events->trigger('viewallarticles') == ""){
 		$data['parents'] = $this->category_model->get_categories_by_parent(0);
 		foreach($data['parents']->result() as $row)
 		{
@@ -61,6 +62,7 @@ class All extends Controller
 		$data['title'] = $this->init_model->get_setting('site_name');
 		
 		$this->init_model->display_template('all', $data);
+		}
 	}
 }
 

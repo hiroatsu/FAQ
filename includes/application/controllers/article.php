@@ -57,6 +57,7 @@ class Article extends Controller
 		$this->load->helper('form');
 		$this->load->helper('cookie');
 		$this->load->helper('gravatar');
+		if($this->core_events->trigger('viewarticle', $uri)==""){
 		$data['title'] = $this->init_model->get_setting('site_name');
 		if($uri<>'' && $uri<>'index') 
 		{
@@ -107,6 +108,7 @@ class Article extends Controller
 			$data='';
 		}
 		$this->init_model->display_template('article', $data);
+		}
 	}
 	
 	// ------------------------------------------------------------------------
