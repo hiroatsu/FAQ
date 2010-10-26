@@ -37,7 +37,22 @@ function install()
         $CI->dbforge->add_key('category_id', TRUE);
         if($CI->dbforge->create_table('categories2fujisan'))
         {
-                return 'categories2fujisan table installed...<br />';
+        //        return 'categories2fujisan table installed...<br />';
+        }
+        }	
+        if ( ! $CI->db->table_exists('siteinfo'))
+        {
+        $CI->dbforge->add_field("site_id int(20) default NULL");
+        $CI->dbforge->add_field("shortname varchar(10) default NULL");
+        $CI->dbforge->add_field("name varchar(50) default NULL");
+        $CI->dbforge->add_field("title varchar(50) default NULL");
+        $CI->dbforge->add_field("url int(20) default NULL");
+        $CI->dbforge->add_field("description varchar(255) default NULL");
+        $CI->dbforge->add_field("keywords varchar(255) default NULL");
+        $CI->dbforge->add_key('site_id', TRUE);
+        if($CI->dbforge->create_table('siteinfo'))
+        {
+                return 'siteinfo table installed...<br />';
         }
         }	
 
