@@ -133,9 +133,7 @@
 					<?php echo lang('kb_display'); ?>
 					</a>
 				</th>
-				<th>
-					PC or Mobile
-				</th>
+                <?php echo $this->core_events->trigger('th_site_info_label'); ?>
 				<th><?php echo lang('kb_actions'); ?></th>
 			</tr>
 			

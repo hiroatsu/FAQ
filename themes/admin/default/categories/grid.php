@@ -17,6 +17,7 @@
 				<th><?php echo lang('kb_id');?></th>
 				<th><?php echo lang('kb_title');?></th>
 				<th><?php echo lang('kb_description');?></th>
+                <?php echo $this->core_events->trigger('th_site_info_label'); ?>
 				<th><?php echo lang('kb_actions');?></th>
 		</tr>
 		<?php  $alt = true; foreach($options as $row): ?>
@@ -24,6 +25,7 @@
 				<td><?php echo $row['cat_id']; ?></td>
 				<td class="title" nowrap><a href="<?php echo site_url('admin/categories/edit/'.$row['cat_id']); ?>"><?php echo $row['cat_name']; ?></a></td>
 				<td><?php echo $row['cat_description']; ?></td>
+				<?php echo $this->core_events->trigger('show_siteinfo_on_categories', $row['cat_id']); ?>
 				<td width="15%" nowrap>
 					<a href="<?php echo site_url('admin/categories/edit/'.$row['cat_id']); ?>"><img src="<?php echo base_url(); ?>images/page_edit.png" border="0" alt="<?php echo lang('kb_edit'); ?>" title="<?php echo lang('kb_edit'); ?>" /></a>
 					&nbsp;

@@ -128,7 +128,11 @@ class Articles extends Controller
 		$this->db->select('articles.article_id, article_uri, article_title, article_display, article_date, article_hits');
 		$this->db->from("articles");
 		$this->db->join('article2cat', 'articles.article_id = article2cat.article_id', 'left');
+		//modification for management module add site_id search
+		if($this->input->post('a_site_id') != 0)
+		{
 		$this->db->join('articles2fujisan', 'articles.article_id = articles2fujisan.article_id', 'left');
+		}
 		// User Level
 		if ($this->session->userdata('level') == 4)
 		{
@@ -155,7 +159,7 @@ class Articles extends Controller
 			$this->db->where('article_author', $this->input->post('a_author'));
 			$data['s_author'] = $this->input->post('a_author', TRUE);
 		}
-		//modification for management module
+		//modification for management module add site_id search
 		if($this->input->post('a_site_id') != 0)
 		{
 			$this->db->where('site_id', $this->input->post('a_site_id'));

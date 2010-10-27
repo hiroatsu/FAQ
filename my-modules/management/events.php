@@ -22,16 +22,23 @@ class management_events
      $core_events->register('category/add', $this, 'add_category_siteinfo');
      $core_events->register('category/edit', $this, 'add_category_siteinfo');
 	 $core_events->register('categories/delete', $this, 'delete_categories2fujisan_by_id');
+     $core_events->register('show_siteinfo_on_categories', $this, 'show_siteinfo_on_categories');
      $core_events->register('articles/add', $this, 'add_article_siteinfo');
      $core_events->register('articles/edit', $this, 'add_article_siteinfo');
      $core_events->register('articles/delete', $this, 'delete_articles2fujisan_by_id');
      $core_events->register('modulecategories/grid', $this, 'show_siteinfo_on_categories');
      $core_events->register('show_site_id_selection', $this, 'show_site_id_selection');
      $core_events->register('show_siteinfo_on_articles', $this, 'show_siteinfo_on_articles');
+     $core_events->register('th_site_info_label', $this, 'th_site_info_label');
 	}
 	
 	// ------------------------------------------------------------------------
 	//For Atricle
+	function th_site_info_label()
+	{
+		echo "<th>PC or MOBILE</th>";
+	}
+
 	function show_article_siteinfo()
 	{
         $CI =& get_instance();
@@ -74,17 +81,17 @@ class management_events
         if ($query->num_rows() > 0){
         	foreach ($query->result() as $row){
            		if( $row->site_id == 1){
-               	echo 'PC';
+               	echo "PC";
           		}
           		if( $row->site_id == 2){
-               	echo 'MOBILE';
+               	echo "MOBILE";
           		}
           		if( $row->site_id != 2 && $row->site_id != 1 ){
-               	echo 'N/A';
+               	echo "N/A";
          		}
         	}
         }else{
-               	echo 'N/A';
+               	echo "N/A";
         }
 		echo "</td>";
 	}
@@ -139,22 +146,23 @@ class management_events
         $id = (int) $category_id;
         $CI->db->from('categories2fujisan')->where('category_id', $id);
         $query = $CI->db->get();
+		echo "<td>";
         if ($query->num_rows() > 0){
         	foreach ($query->result() as $row){
            		if( $row->site_id == 1){
-               	$SiteInfo = 'PC';
+               	echo "PC";
           		}
           		if( $row->site_id == 2){
-               	$SiteInfo = 'MOBILE';
+               	echo "MOBILE";
           		}
           		if( $row->site_id != 2 && $row->site_id != 1 ){
-               	$SiteInfo = 'N/A';
+               	echo "N/A";
          		}
         	}
         }else{
-               	$SiteInfo = 'N/A';
+               	echo "N/A";
         }
-	return $SiteInfo;
+		echo "</td>";
 	}
 
     function show_category_siteinfo()
