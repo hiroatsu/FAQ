@@ -179,7 +179,8 @@ class site_events
 				$CI->output->cache($CI->init_model->get_setting('cache_time'));
 			}
 		}
-		
+		$data = $this->set_meta_info_with_site_id($data,$user_agent);
+/**		
 		// meta content
 		if ( ! isset($data['title']))
 		{
@@ -193,6 +194,7 @@ class site_events
 		{
 			$data['meta_description'] = $CI->init_model->get_setting('site_description');
 		}
+*/
 		// Check the body exists
 		$data['body'] = $this->load_body($template, $dir, $data, $user_agent,$is_shiftjis);
 		
@@ -211,16 +213,9 @@ class site_events
 	{
 	    $CI =& get_instance();
 		$data['settings']=$CI->init_model->settings;
-		
-		if ($dir=='admin')
-		{
-			$body_file = $dir.'/'.$data['settings']['admin_template'].'/'.$template.'.php';
-		}
-		else
-		{
-			$body_file = $dir.'/'.$data['settings']['template'].'/'.$template.'.php';
-		}
-		
+
+		$body_file =$this ->get_body_file_with_site_id($template, $dir='front', $data, $user_agent, $is_shiftjis);
+        //file chekc if not exist load default page
 		if ($CI->init_model->test_exists($body_file))
 		{			
         	if($is_shiftjis){
@@ -250,19 +245,8 @@ class site_events
 	{
 	    $CI =& get_instance();
 		$data['settings']=$CI->init_model->settings;
-		
-		if (defined('IN_ADMIN'))
-		{
-			$layout_file = $dir.'/'.$data['settings']['admin_template'].'/layout.php';
-		}
-		else
-		{
-			if($this->isMobile($user_agent)){
-			$layout_file = $dir.'/'.$data['settings']['template'].'/mobilelayout.php';
-			}else{
-			$layout_file = $dir.'/'.$data['settings']['template'].'/layout.php';
-			}
-		}
+		$data['settings']['site_name']=$data['title'];
+		$layout_file=$this -> get_layout_template_with_site_id($dir='front', $data, $user_agent, $is_shiftjis);
 		if ($CI->init_model->test_exists($layout_file))
 		{
         	if ($is_shiftjis){
@@ -288,7 +272,6 @@ class site_events
 			}
 		}
 	}
-
 	
 	function show_thanks($data)
 	{
@@ -417,13 +400,6 @@ class site_events
 
 	/**
 	 * Get Categories By Parent.
-	 *
-	 * Get an array of categories that have the
-	 * same parent.
-	 *
-	 * @access	public
-	 * @param	int	the parent id
-	 * @return	array
 	 */
 	function get_categories_by_parent_with_useragent($parent)
 	{
@@ -495,54 +471,171 @@ class site_events
 		$query = $CI->db->get();
 		return $query;
 	}
-/**
-	function display_template($data,$user_agent,$is_shiftjis, $dir='front')
-	{
-		$template = 'all';
-        $CI =& get_instance();
-		$data['settings']=$CI->init_model->settings;
-		
-		// check directory
-		if ($dir=='admin')
-		{
-			define('IN_ADMIN', TRUE);
-		}
-		else
-		{
-			$dir='front';
-			// are we caching?
-			if ($CI->init_model->get_setting('cache_time') > 0)
-			{
-				$CI->output->cache($CI->init_model->get_setting('cache_time'));
-			}
-		}
-		
-		// meta content
-		if ( ! isset($data['title']))
-		{
-			$data['title'] = $CI->init_model->get_setting('site_name');
-		}
-		if ( ! isset($data['meta_keywords']))
-		{
-			$data['meta_keywords'] = $CI->init_model->get_setting('site_keywords');
-		}
-		if ( ! isset($data['meta_description']))
-		{
-			$data['meta_description'] = $CI->init_model->get_setting('site_description');
-		}
-		
-		// Check the body exists
-		$data['body'] = $this->load_body($template, $dir, $data, $user_agent,$is_shiftjis);
-		
-        // Now check the layout exists
-		$this->load_layout($dir, $data, $user_agent,$is_shiftjis);
-		// finally show the last hook
-		$CI->core_events->trigger('display_template');	
-	}
-*/
-
 
 	
+	function get_body_file_with_site_id($template, $dir='front', $data, $user_agent, $is_shiftjis){
+		
+		if($dir=='front'){
+			$CI =& get_instance();
+			//PC
+			if($this->isMobile($user_agent) == false){
+				$CI->db->select('template');
+				$CI->db->from('siteinfo');
+				$CI->db->where('site_id', 1);
+				$query = $CI->db->get();
+				
+				if ($query->num_rows() > 0){
+					foreach ($query->result() as $row){
+						if ($row->template !== null && $row->template !== ''){
+						$body_file = $dir.'/'.$row->template.'/'.$template.'.php';
+						return $body_file;
+						}else{
+						$body_file = $dir.'/'.$data['settings']['template'].'/'.$template.'.php';
+						return $body_file;
+						}
+					}
+				}else{
+						$body_file = $dir.'/'.$data['settings']['template'].'/'.$template.'.php';
+						return $body_file;
+				}
+			//Mobile
+			}else{
+				$CI->db->select('template');
+				$CI->db->from('siteinfo');
+				$CI->db->where('site_id', 2);
+				$query = $CI->db->get();
+				if ($query->num_rows() > 0){
+					foreach ($query->result() as $row){
+						if ($row->template !== null && $row->template !== ''){
+						$body_file = $dir.'/'.$row->template.'/'.$template.'.php';
+						return $body_file;
+						}else{
+						$body_file = $dir.'/'.$data['settings']['template'].'/'.$template.'.php';
+						return $body_file;
+						}
+					}
+				}else{
+					$body_file = $dir.'/'.$data['settings']['template'].'/'.$template.'.php';
+					return $body_file;
+				
+				}
+			}
+		}
+		if ($dir=='admin'){
+			$body_file = $dir.'/'.$data['settings']['admin_template'].'/'.$template.'.php';
+			return $body_file;
+		}
+	}
+
+		
+	function get_layout_template_with_site_id($dir='front', $data, $user_agent, $is_shiftjis){
+		if (defined('IN_ADMIN')){
+			$layout_file = $dir.'/'.$data['settings']['admin_template'].'/layout.php';
+		}else{
+			$CI =& get_instance();
+			//PC
+			if($this->isMobile($user_agent) == false){
+				$CI->db->select('template');
+				$CI->db->from('siteinfo');
+				$CI->db->where('site_id', 1);
+				$query = $CI->db->get();
+				if ($query->num_rows() > 0){
+					foreach ($query->result() as $row){
+						if ($row->template !== null && $row->template !== ''){
+						$layout_file = $dir.'/'.$row->template.'/layout.php';
+						return $layout_file;
+						}else{
+						$layout_file = $dir.'/'.$data['settings']['template'].'/layout.php';
+						return $layout_file;
+						}
+					}
+				}else{
+					$layout_file = $dir.'/'.$data['settings']['template'].'/layout.php';
+					return $layout_file;
+				}
+			//Mobile
+			}else{
+				$CI->db->select('template');
+				$CI->db->from('siteinfo');
+				$CI->db->where('site_id', 2);
+				$query = $CI->db->get();
+				if ($query->num_rows() > 0){
+					foreach ($query->result() as $row){
+						if ($row->template !== null && $row->template !== ''){
+						$layout_file = $dir.'/'.$row->template.'/layout.php';
+						return $layout_file;
+						}else{
+						$layout_file = $dir.'/'.$data['settings']['template'].'/mobilelayout.php';
+						return $layout_file;
+						}
+					}
+				}else{
+					$layout_file = $dir.'/'.$data['settings']['template'].'/mobilelayout.php';
+					return $layout_file;
+				}			
+			}
+		}
+	}	
+
+	function set_meta_info_with_site_id($data,$user_agent){
+		// meta content
+		//PC
+		$CI =& get_instance();
+		if($this->isMobile($user_agent) == false){
+				$CI->db->select('title,keywords,description');
+				$CI->db->from('siteinfo');
+				$CI->db->where('site_id', 1);
+				$query = $CI->db->get();
+				if ($query->num_rows() > 0){
+					foreach ($query->result() as $row){
+					$data['title'] = $row->title;
+					$data['meta_keywords'] = $row->keywords;
+					$data['meta_description'] = $row->description;
+					}
+				}else{
+					if ( ! isset($data['title']))
+					{
+						$data['title'] = $CI->init_model->get_setting('site_name');
+					}	
+					if ( ! isset($data['meta_keywords']))
+					{
+						$data['meta_keywords'] = $CI->init_model->get_setting('site_keywords');
+					}
+					if ( ! isset($data['meta_description']))
+					{
+						$data['meta_description'] = $CI->init_model->get_setting('site_description');
+					}
+				}
+		//Mobile
+		}else{
+				$CI->db->select('title,keywords,description');
+				$CI->db->from('siteinfo');
+				$CI->db->where('site_id', 2);
+				$query = $CI->db->get();
+				if ($query->num_rows() > 0){
+					foreach ($query->result() as $row){
+					$data['title'] = $row->title;
+					$data['meta_keywords'] = $row->keywords;
+					$data['meta_description'] = $row->description;
+					}
+				}else{
+					if ( ! isset($data['title']))
+					{
+						$data['title'] = $CI->init_model->get_setting('site_name');
+					}	
+					if ( ! isset($data['meta_keywords']))
+					{
+						$data['meta_keywords'] = $CI->init_model->get_setting('site_keywords');
+					}
+					if ( ! isset($data['meta_description']))
+					{
+						$data['meta_description'] = $CI->init_model->get_setting('site_description');
+					}
+				}
+		}
+		return $data;
+	}
+
 }
 
 /* End of file events.php */

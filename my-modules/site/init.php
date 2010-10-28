@@ -45,11 +45,11 @@ function install()
         $CI->dbforge->add_field("site_id int(20) default NULL");
         $CI->dbforge->add_field("shortname varchar(10) default NULL");
         $CI->dbforge->add_field("name varchar(50) default NULL");
+        $CI->dbforge->add_field("url varchar(50) default NULL");
+        $CI->dbforge->add_field("template varchar(50) default NULL");
         $CI->dbforge->add_field("title varchar(50) default NULL");
-        $CI->dbforge->add_field("url int(20) default NULL");
-        $CI->dbforge->add_field("description varchar(255) default NULL");
         $CI->dbforge->add_field("keywords varchar(255) default NULL");
-        $CI->dbforge->add_field("title varchar(255) default NULL");
+        $CI->dbforge->add_field("description varchar(255) default NULL");
         $CI->dbforge->add_key('site_id', TRUE);
         if($CI->dbforge->create_table('siteinfo'))
         {
