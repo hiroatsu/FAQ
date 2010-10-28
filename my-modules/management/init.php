@@ -53,7 +53,14 @@ function install()
         $CI->dbforge->add_key('site_id', TRUE);
         if($CI->dbforge->create_table('siteinfo'))
         {
-                return 'siteinfo table installed...<br />';
+		//Defaut data
+		$data = array('site_id' => 0,'name' => "ALL",'template' => 'default');
+		$CI->db->insert('siteinfo', $data);
+		$data = array('site_id' => 1,'name' => "PC Site",'template' => 'default','title' => 'PC Site');
+		$CI->db->insert('siteinfo', $data);
+		$data = array('site_id' => 2,'name' => "Mobile Site",'template' => 'mobile','title' => 'Mobie Site');
+		$CI->db->insert('siteinfo', $data);
+        return 'siteinfo table installed...<br />';
         }
         }	
 
