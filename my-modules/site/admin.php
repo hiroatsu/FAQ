@@ -42,42 +42,6 @@
 	<p><input type="submit" name="submit" class="save" value="Submit" /></p>
 </form>
 
-<h2>SiteInfo</h2>
-<p>Below will be information of siteinfo table:</p>
-<?php
-$CI =& get_instance();
-$CI->db->from('siteinfo');
-$query = $CI->db->get();
-echo '<table>';
-echo '<tr>';
-echo '<th>site_id</th>';
-echo '<th>shortname</th>';
-echo '<th>name</th>';
-echo '<th>uri</th>';
-echo '<th>template</th>';
-echo '<th>title</th>';
-echo '<th>keywords</th>';
-echo '<th>description</th>';
-echo '</tr>';
-if ($query->num_rows() > 0)
-{
-	foreach ($query->result() as $row)
-	{
-	echo '<tr>';
-	echo '<td>'.$row->site_id.'</td>';
-	echo '<td>'.$row->shortname.'</td>';
-	echo '<td>'.$row->name.'</td>';
-	echo '<td>'.$row->url.'</td>';
-	echo '<td>'.$row->template.'</td>';
-	echo '<td>'.$row->title.'</td>';
-	echo '<td>'.$row->keywords.'</td>';
-	echo '<td>'.$row->description.'</td>';
-	echo '</tr>';
-	}
-	
-}
-echo '</table>';
-?>
 
 <?php 
 	    $CI =& get_instance();
@@ -164,3 +128,39 @@ echo '</table>';
 		}
 		?>
 
+<h2>SiteInfo</h2>
+<p>Below will be information of siteinfo table:</p>
+<?php
+$CI =& get_instance();
+$CI->db->from('siteinfo');
+$query = $CI->db->get();
+echo '<table>';
+echo '<tr>';
+echo '<th>site_id</th>';
+echo '<th>shortname</th>';
+echo '<th>name</th>';
+echo '<th>uri</th>';
+echo '<th>template</th>';
+echo '<th>title</th>';
+echo '<th>keywords</th>';
+echo '<th>description</th>';
+echo '</tr>';
+if ($query->num_rows() > 0)
+{
+	foreach ($query->result() as $row)
+	{
+	echo '<tr>';
+	echo '<td>'.$row->site_id.'</td>';
+	echo '<td>'.$row->shortname.'</td>';
+	echo '<td>'.$row->name.'</td>';
+	echo '<td>'.$row->url.'</td>';
+	echo '<td>'.$row->template.'</td>';
+	echo '<td>'.$row->title.'</td>';
+	echo '<td>'.$row->keywords.'</td>';
+	echo '<td>'.$row->description.'</td>';
+	echo '</tr>';
+	}
+	
+}
+echo '</table>';
+?>
