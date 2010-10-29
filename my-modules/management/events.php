@@ -240,18 +240,22 @@ class management_events
 	 }
 	}
 
-
     function show_site_id_selection(){
-	echo "<td>";
-	echo "<select name='a_site_id' id='a_site_id'>";
-	echo "<option value='0' selected>PC and Mobile</option>";
-	echo "<option value='1'>PC</option>";
-	echo "<option value='2'>Mobile</option>";
-	echo "</select>";
-	echo "</td>";	
+        $selectionarray = array();
+		$CI =& get_instance();
+		$CI->load->helper('form');
+		$CI->db->select('site_id,shortname');
+		$query = $CI->db->get('siteinfo');
+		if ($query->num_rows >0){
+			foreach($query->result() as $row){
+				$selectionarray[$row->site_id] = $row->shortname;
+			}
+			
+		}
+		echo '<td>';
+		echo form_dropdown('a_site_id',$selectionarray,'0');			
+		echo '</td>';
 	}
-
-
 
 }
 
