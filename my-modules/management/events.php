@@ -48,8 +48,8 @@ class management_events
         echo '<p class="row2">';
         echo '<label for="article_display">Site Info:</label>';
         echo '<select tabindex="6" name="site_id" id="site_id" >';
-        if ($query->num_rows() > 0){
-        	foreach ($query->result() as $row){
+		if ($query->num_rows() > 0){
+			foreach ($query->result() as $row){
            		if((int)$row->site_id == 1){
 			        $CI->db->select('site_id,shortname');
 			        $CI->db->from('siteinfo');
@@ -59,10 +59,10 @@ class management_events
         	   				if( (int)$site_info->site_id == 0){
           					}
         	   				if( (int)$site_info->site_id == 1){
-		               		echo '<option value="$site_info->site_id" selected>$site_info->shortname</option>';
+		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
 							}
-							if((int)$site_info->site_id !== 0 & (int)$site_info->site_id !== 1 ){
-		               		echo '<option value="$site_info->site_id" >$site_info->shortname</option>';
+							if((int)$site_info->site_id !== 0 && (int)$site_info->site_id !== 1 ){
+		               		echo '<option value="'.$site_info->site_id.'" >'.$site_info->shortname.'</option>';
 							}
         				}
 					}else{
@@ -90,7 +90,7 @@ class management_events
                		echo '<option value="2" selected>Mobile</option>';
 					}
           		}
-          		if( (int) $row->site_id !== 2 && $row->site_id !== 1 ){
+          		if( (int) $row->site_id !== 2 && (int)$row->site_id !== 1 ){
           		echo '<option value="2" >Mobile</option>';
           		echo '<option value="1" >PC</option>';
          		}
@@ -223,10 +223,10 @@ class management_events
         	   				if( (int)$site_info->site_id == 0){
           					}
         	   				if( (int)$site_info->site_id == 1){
-		               		echo '<option value="$site_info->site_id" selected>$site_info->shortname</option>';
+		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
 							}
-							if((int)$site_info->site_id !== 0 & (int)$site_info->site_id !== 1 ){
-		               		echo '<option value="$site_info->site_id" >$site_info->shortname</option>';
+							if((int)$site_info->site_id !== 0 && (int)$site_info->site_id !== 1 ){
+		               		echo '<option value="'.$site_info->site_id.'" >'.$site_info->shortname.'</option>';
 							}
         				}
 					}else{
@@ -254,7 +254,7 @@ class management_events
                		echo '<option value="2" selected>Mobile</option>';
 					}
           		}
-          		if( (int) $row->site_id !== 2 && $row->site_id !== 1 ){
+          		if( (int) $row->site_id !== 2 && (int)$row->site_id !== 1 ){
           		echo '<option value="2" >Mobile</option>';
           		echo '<option value="1" >PC</option>';
          		}
