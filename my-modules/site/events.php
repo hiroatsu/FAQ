@@ -39,7 +39,8 @@ class site_events
 		//For topSearch
 		$data['cat_tree'] = $this->get_cats_for_select_with_site_id();		
 		//$data['latest'] = $CI->article_model->get_latest(10);
-		$data['pop'] = $CI->article_model->get_most_popular(10);
+		//$data['pop'] = $CI->article_model->get_most_popular(10);
+		$data['pop'] = $this->get_most_popular_with_site_id(10);
 		$data['title'] = $CI->init_model->get_setting('site_name');
 		
 		$data['settings']=$CI->init_model->settings;
@@ -352,17 +353,26 @@ class site_events
 	    $CI =& get_instance();
 		$useragent = $CI->input->user_agent();
 		$is_shiftjis = $this->is_shiftjis($useragent);
+		$data = $this->set_siteinfo_with_site_id($data,$useragent);
+
 		$id = (int) $cat_id;	
 		$CI->db->from('categories');
 		$CI->db->join('categories2fujisan', 'categories.cat_id = categories2fujisan.category_id', 'left');
 		$CI->db->orderby('cat_order', 'DESC')->orderby('cat_name', 'asc')->where('cat_parent', $id)->where('cat_display', 'Y');
-		$CI->db->where('site_id', 2);
+		$useragent = $CI->input->user_agent();
+		if($this->is_mobile($useragent) == false)
+		{
+		   $CI->db->where('site_id', 1);
+		}else {
+		   $CI->db->where('site_id', 2);
+		}
 		$query = $CI->db->get();
 		$data['query'] = $query;
+		$data = $this->set_siteinfo_with_site_id($data,$useragent);
         if ($is_shiftjis){
-            return $this->convertUtfToShiftjis($CI->load->view('front/mobile/secondcategory.php', $data));
+            return $this->convertUtfToShiftjis($CI->load->view('front/'.$data['template_location'].'/secondcategory.php', $data));
 		}else{
-			return $CI->load->view($dir.'/default/'.$template, $data);
+			return $CI->load->view('front/'.$data['template_location'].'/secondcategory.php', $data);
 		}
 	}
 
@@ -373,17 +383,25 @@ class site_events
 	    $CI =& get_instance();
 		$useragent = $CI->input->user_agent();
 		$is_shiftjis = $this->is_shiftjis($useragent);
+
 		$id = (int) $cat_id;	
 		$CI->db->from('categories');
 		$CI->db->join('categories2fujisan', 'categories.cat_id = categories2fujisan.category_id', 'left');
 		$CI->db->orderby('cat_order', 'DESC')->orderby('cat_name', 'asc')->where('cat_parent', $id)->where('cat_display', 'Y');
-		$CI->db->where('site_id', 2);
+		$useragent = $CI->input->user_agent();
+		if($this->is_mobile($useragent) == false)
+		{
+		   $CI->db->where('site_id', 1);
+		}else {
+		   $CI->db->where('site_id', 2);
+		}
 		$query = $CI->db->get();
 		$data['query'] = $query;
+		$data = $this->set_siteinfo_with_site_id($data,$useragent);
         if ($is_shiftjis){
-            return $this->convertUtfToShiftjis($CI->load->view('front/mobile/thirdcategory.php', $data));
+            return $this->convertUtfToShiftjis($CI->load->view('front/'.$data['template_location'].'/thirdcategory.php', $data));
 		}else{
-			return $CI->load->view($dir.'/default/'.$template, $data);
+			return $CI->load->view('front/'.$data['template_location'].'/thirdcategory.php', $data);
 		}
 	}
 
@@ -429,7 +447,8 @@ class site_events
 		$data['settings']=$CI->init_model->settings;
 
 		$body_file =$this ->get_body_file_with_site_id($template, $dir='front', $data, $useragent, $is_shiftjis);
-		$data['topsearch'] = $this->get_template_data_with_site_id($dir='front','topsearch', $data, $useragent, $is_shiftjis);	
+
+		$data['topsearch'] = $this->get_template_data_with_site_id($dir='front','topsearch', $data, $useragent, false);	
 		//file chekc if not exist load default page
 		if ($CI->init_model->test_exists($body_file))
 		{			
@@ -1045,6 +1064,15 @@ class site_events
 		//echo $this->db->last_query();
 		foreach ($query->result() as $row)
 		{
+			/**
+			if($this->is_shiftjis($useragent)== true){
+			$rs['cat_name']=$this->convertUtfToShiftjis($prefix.$row->cat_name);
+			$rs['cat_description']=$this->convertUtfToShiftjis($row->cat_description);
+			}else{
+			$rs['cat_name']=$prefix . $row->cat_name;
+			$rs['cat_description']=$row->cat_description;
+			}
+			*/
 			$rs['cat_name']=$prefix . $row->cat_name;
 			$rs['cat_id']=$row->cat_id;
 			$rs['cat_uri']=$row->cat_uri;
@@ -1068,10 +1096,27 @@ class site_events
 				$rs['selected'] = 'N';
 			}
 			array_push($arr, $rs);
-			$arr = array_merge($arr, $this->get_cats_for_select_with_site_id($prefix .'&nbsp;&nbsp;&raquo;&nbsp;', $id, $article_id,$admin));
+			$arr = array_merge($arr, $this->get_cats_for_select_with_site_id($prefix.'&nbsp;&nbsp;&raquo;&nbsp;', $id, $article_id,$admin));
 		}
 		return $arr;
 	}
+	function get_most_popular_with_site_id($number=25){
+		$CI =& get_instance();
+		$number = (int)$number;
+		$CI->db->select('article_uri,article_title')->from('articles');
+		$CI->db->join('articles2fujisan', 'articles.article_id = articles2fujisan.article_id', 'left');
+		$useragent = $CI->input->user_agent();
+		if($this->is_mobile($useragent) == false)
+		{
+		   $CI->db->where('site_id', 1);
+		}else {
+		   $CI->db->where('site_id', 2);
+		}
+		$CI->db->where('article_display', 'Y')->orderby('article_hits', 'DESC')->limit($number);
+		$query = $CI->db->get();
+		return $query;
+	}
+
 }
 
 /* End of file events.php */
