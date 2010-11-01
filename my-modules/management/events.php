@@ -46,19 +46,51 @@ class management_events
         $CI->db->from('articles2fujisan')->where('article_id', $id);
         $query = $CI->db->get();
         echo '<p class="row2">';
-        echo '<label for="article_display">PC or Mobile:</label>';
+        echo '<label for="article_display">Site Info:</label>';
         echo '<select tabindex="6" name="site_id" id="site_id" >';
         if ($query->num_rows() > 0){
         	foreach ($query->result() as $row){
-           		if( $row->site_id == 1){
-               	echo '<option value="1" selected>PC</option>';
-               	echo '<option value="2">Mobile</option>';
+           		if((int)$row->site_id == 1){
+			        $CI->db->select('site_id,shortname');
+			        $CI->db->from('siteinfo');
+					$site_infos = $CI->db->get();
+		    	    if ($site_infos->num_rows() > 0){
+		        		foreach ($site_infos->result() as $site_info){
+        	   				if( (int)$site_info->site_id == 0){
+          					}
+        	   				if( (int)$site_info->site_id == 1){
+		               		echo '<option value="$site_info->site_id" selected>$site_info->shortname</option>';
+							}
+							if((int)$site_info->site_id !== 0 & (int)$site_info->site_id !== 1 ){
+		               		echo '<option value="$site_info->site_id" >$site_info->shortname</option>';
+							}
+        				}
+					}else{
+               		echo '<option value="1" selected>PC</option>';
+               		echo '<option value="2">Mobile</option>';
+					}
           		}
-          		if( $row->site_id == 2){
-               	echo '<option value="2" selected>Mobile</option>';
-               	echo '<option value="1" >PC</option>';
+          		if( (int)$row->site_id == 2){
+			        $CI->db->select('site_id,shortname');
+			        $CI->db->from('siteinfo');
+					$site_infos = $CI->db->get();
+		    	    if ($site_infos->num_rows() > 0){
+		        		foreach ($site_infos->result() as $site_info){
+        	   				if( (int)$site_info->site_id == 0){
+          					}
+        	   				if( (int)$site_info->site_id == 2){
+		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
+							}
+							if((int)$site_info->site_id !== 0 && (int)$site_info->site_id !== 2 ){
+		               		echo '<option value="'.$site_info->site_id.'" >'.$site_info->shortname.'</option>';
+							}
+        				}
+					}else{
+               		echo '<option value="1">PC</option>';
+               		echo '<option value="2" selected>Mobile</option>';
+					}
           		}
-          		if( $row->site_id != 2 && $row->site_id != 1 ){
+          		if( (int) $row->site_id !== 2 && $row->site_id !== 1 ){
           		echo '<option value="2" >Mobile</option>';
           		echo '<option value="1" >PC</option>';
          		}
@@ -80,15 +112,18 @@ class management_events
 		echo "<td>";
         if ($query->num_rows() > 0){
         	foreach ($query->result() as $row){
-           		if( $row->site_id == 1){
-               	echo "PC";
-          		}
-          		if( $row->site_id == 2){
-               	echo "MOBILE";
-          		}
-          		if( $row->site_id != 2 && $row->site_id != 1 ){
-               	echo "N/A";
-         		}
+				if( $row->site_id == null || ($row->site_id !== null && (int)$row->site_id == 0)){
+					echo "N/A";
+				}
+			    $CI->db->select('shortname');
+			    $CI->db->from('siteinfo');
+				$CI->db->where('site_id',(int)$row->site_id);
+				$site_infos = $CI->db->get();
+		    	if ($site_infos->num_rows() > 0){
+		        	foreach ($site_infos->result() as $site_info){
+		             	echo "$site_info->shortname";
+					}
+				}
         	}
         }else{
                	echo "N/A";
@@ -149,15 +184,18 @@ class management_events
 		echo "<td>";
         if ($query->num_rows() > 0){
         	foreach ($query->result() as $row){
-           		if( $row->site_id == 1){
-               	echo "PC";
-          		}
-          		if( $row->site_id == 2){
-               	echo "MOBILE";
-          		}
-          		if( $row->site_id != 2 && $row->site_id != 1 ){
-               	echo "N/A";
-         		}
+				if( $row->site_id == null || ($row->site_id !== null && (int)$row->site_id == 0)){
+					echo "N/A";
+				}
+			    $CI->db->select('shortname');
+			    $CI->db->from('siteinfo');
+				$CI->db->where('site_id',(int)$row->site_id);
+				$site_infos = $CI->db->get();
+		    	if ($site_infos->num_rows() > 0){
+		        	foreach ($site_infos->result() as $site_info){
+		             	echo "$site_info->shortname";
+					}
+				}
         	}
         }else{
                	echo "N/A";
@@ -176,15 +214,47 @@ class management_events
         echo '<select tabindex="6" name="site_id" id="site_id" >';
 		if ($query->num_rows() > 0){
 			foreach ($query->result() as $row){
-           		if( $row->site_id == 1){
-               	echo '<option value="1" selected>PC</option>';
-               	echo '<option value="2">Mobile</option>';
+           		if((int)$row->site_id == 1){
+			        $CI->db->select('site_id,shortname');
+			        $CI->db->from('siteinfo');
+					$site_infos = $CI->db->get();
+		    	    if ($site_infos->num_rows() > 0){
+		        		foreach ($site_infos->result() as $site_info){
+        	   				if( (int)$site_info->site_id == 0){
+          					}
+        	   				if( (int)$site_info->site_id == 1){
+		               		echo '<option value="$site_info->site_id" selected>$site_info->shortname</option>';
+							}
+							if((int)$site_info->site_id !== 0 & (int)$site_info->site_id !== 1 ){
+		               		echo '<option value="$site_info->site_id" >$site_info->shortname</option>';
+							}
+        				}
+					}else{
+               		echo '<option value="1" selected>PC</option>';
+               		echo '<option value="2">Mobile</option>';
+					}
           		}
-          		if( $row->site_id == 2){
-               echo '<option value="2" selected>Mobile</option>';
-               echo '<option value="1" >PC</option>';
+          		if( (int)$row->site_id == 2){
+			        $CI->db->select('site_id,shortname');
+			        $CI->db->from('siteinfo');
+					$site_infos = $CI->db->get();
+		    	    if ($site_infos->num_rows() > 0){
+		        		foreach ($site_infos->result() as $site_info){
+        	   				if( (int)$site_info->site_id == 0){
+          					}
+        	   				if( (int)$site_info->site_id == 2){
+		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
+							}
+							if((int)$site_info->site_id !== 0 && (int)$site_info->site_id !== 2 ){
+		               		echo '<option value="'.$site_info->site_id.'" >'.$site_info->shortname.'</option>';
+							}
+        				}
+					}else{
+               		echo '<option value="1">PC</option>';
+               		echo '<option value="2" selected>Mobile</option>';
+					}
           		}
-          		if( $row->site_id != 2 && $row->site_id != 1 ){
+          		if( (int) $row->site_id !== 2 && $row->site_id !== 1 ){
           		echo '<option value="2" >Mobile</option>';
           		echo '<option value="1" >PC</option>';
          		}
