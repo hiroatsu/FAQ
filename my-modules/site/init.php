@@ -22,7 +22,7 @@ function install()
 	    $CI->load->dbforge();
         if ( ! $CI->db->table_exists('articles2fujisan'))
         {
-        $CI->dbforge->add_field("article_id int(20) default NULL");
+        $CI->dbforge->add_field("article_id int(20) NOT NULL");
         $CI->dbforge->add_field("site_id int(20) default NULL");
         $CI->dbforge->add_key('article_id', TRUE);
         if($CI->dbforge->create_table('articles2fujisan'))
@@ -42,7 +42,7 @@ function install()
         }	
         if ( ! $CI->db->table_exists('siteinfo'))
         {
-        $CI->dbforge->add_field("site_id int(20) default NULL");
+        $CI->dbforge->add_field("site_id int(20) NOT NULL");
         $CI->dbforge->add_field("shortname varchar(10) default NULL");
         $CI->dbforge->add_field("name varchar(50) default NULL");
         $CI->dbforge->add_field("url varchar(50) default NULL");
@@ -53,15 +53,49 @@ function install()
         $CI->dbforge->add_key('site_id', TRUE);
         if($CI->dbforge->create_table('siteinfo'))
         {
-		$data = array('site_id' => 0,'name' => "ALL",'template' => 'default');
+		$data = array('site_id' => 0,'shortname' => "ALL",'template' => 'default');
 		$CI->db->insert('siteinfo', $data);
-		$data = array('site_id' => 1,'name' => "PC Site",'template' => 'default','title' => 'PC Site');
+		$data = array('site_id' => 1,'shortname' => "PC",'template' => 'pc','title' => 'PC Site');
 		$CI->db->insert('siteinfo', $data);
-		$data = array('site_id' => 2,'name' => "Mobile Site",'template' => 'mobile','title' => 'Mobile Site');
+		$data = array('site_id' => 2,'shortname' => "Mobile",'template' => 'mobile','title' => 'Mobile Site');
 		$CI->db->insert('siteinfo', $data);
-        return 'siteinfo table installed...<br />';
+        //return 'siteinfo table installed...<br />';
         }
         }	
+
+        if ( ! $CI->db->table_exists('clickinfo'))
+        {
+		$fields = array(
+			'id'=> array('type' => 'INT','constraint'=>20,'unsigned'=> TRUE,'auto_increment'=> TRUE)
+		);	
+        $CI->dbforge->add_field($fields);
+		$CI->dbforge->add_field("article_id int(20) NOT NULL");
+		$CI->dbforge->add_field("referrer varchar(255) default NULL");
+		$CI->dbforge->add_field("visit_datetime datetime default NULL");
+		$CI->dbforge->add_key('id', TRUE);
+        if($CI->dbforge->create_table('clickinfo'))
+        {
+        //      return 'articles2fujisan table installed...<br />';
+        }
+        }
+
+        if ( ! $CI->db->table_exists('rating_log'))
+        {
+		$fields = array(
+			'id'=> array('type' => 'INT','constraint'=>20,'unsigned'=> TRUE,'auto_increment'=> TRUE)
+		);	
+        $CI->dbforge->add_field($fields);
+		$CI->dbforge->add_field("article_id int(20) NOT NULL");
+		$CI->dbforge->add_field("article_rating int(11) NOT NULL default '0'");
+		$CI->dbforge->add_field("datetime datetime default NULL");
+		$CI->dbforge->add_key('id', TRUE);
+        if($CI->dbforge->create_table('rating_log'))
+        {
+        //      return 'articles2fujisan table installed...<br />';
+        }
+        }
+
+
 
 }
 

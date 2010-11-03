@@ -24,8 +24,40 @@ class site_events
      $core_events->register('thirdcatetory', $this, 'content_thirdcatetory');
      $core_events->register('secondcatetory', $this, 'content_secondcatetory');
      $core_events->register('categorydata', $this, 'categorydata');
+     $core_events->register('thankyou', $this, 'thankyou');
+     $core_events->register('addrating', $this, 'insert_rating_log');
 	}
 
+    function thankyou()
+    {
+
+	    $CI =& get_instance();
+		$useragent = $CI->input->user_agent();
+		$is_shiftjis = $this->is_shiftjis($useragent);
+		
+		$data['settings']=$CI->init_model->settings;
+
+		$template = 'thanks';
+
+		$dir='front';
+		// are we caching?
+		if ($CI->init_model->get_setting('cache_time') > 0)
+		{
+			$CI->output->cache($CI->init_model->get_setting('cache_time'));
+		}
+		
+		$data = $this->set_siteinfo_with_site_id($data,$useragent);
+
+		// Check the body exists
+		$data['body'] = $this->load_base_body($template, $dir, $data, $useragent,$is_shiftjis);
+		
+        // Now check the layout exists
+		$this->load_layout($dir, $data, $useragent,$is_shiftjis);
+		// finally show the last hook
+		$CI->core_events->trigger('display_template');	
+
+		return "done";
+    }
 
     function viewtop()
     {
@@ -72,6 +104,7 @@ class site_events
 	    $CI =& get_instance();
 		$useragent = $CI->input->user_agent();
 		$is_shiftjis = $this->is_shiftjis($useragent);
+		$CI->load->library('user_agent');
 
 		$data['title'] = $CI->init_model->get_setting('site_name');
 		if($uri<>'' && $uri<>'index') 
@@ -83,6 +116,13 @@ class site_events
 				$data['article'] = $article;
 				$CI->article_model->add_hit($data['article']->article_id);
 				
+				//function for insert aritcle_id, referre, date  
+				$param = array(
+				'article_id' => (int) $data['article']->article_id, 
+				'visit_datetime' => date('Y-m-d H:i:s',time()), 
+				'referrer' => $CI->agent->referrer()
+				);
+				$this->insert_clickinfo($param);
 				//format description
 				$data['article']->article_description = $CI->article_model->glossary($data['article']->article_description);
 				
@@ -1117,6 +1157,42 @@ class site_events
 		return $query;
 	}
 
+	function insert_clickinfo($data)
+	{
+        $CI =& get_instance();
+		$CI->db->insert('clickinfo', $data);
+        if ($CI->db->affected_rows() > 0){
+        	$CI->db->cache_delete_all();
+        }
+	}
+
+    function insert_rating_log($data){
+		$CI =& get_instance();
+
+		$article_id = (int) $data['article_id'];
+		$article_rating = (int) $data['rating'];
+		$param = array(
+				'article_id' => $article_id, 
+				'datetime' => date('Y-m-d H:i:s',time()),
+				'article_rating'=> $article_rating
+		);
+		$CI->db->insert('rating_log', $param);
+        if ($CI->db->affected_rows() > 0){
+        	$CI->db->cache_delete_all();
+        }
+		if((int) $article_rating == 1){
+			$CI->core_events->trigger('thankyou');
+			return "Done";
+			//$CI->load->helper('url');
+		}else{
+			$useragent = $CI->input->user_agent();
+			if($this->is_mobile($useragent)){
+				redirect('http://mobile.fms-alpha.com'); 
+			}else{
+				redirect('https://www.fms-beta.com/Support/CSMail.asp'); 
+			}
+		}
+	}
 }
 
 /* End of file events.php */
