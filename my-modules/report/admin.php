@@ -7,7 +7,7 @@ $CI =& get_instance();
 ?>
 <form method="post" action="<?php echo site_url('/admin/modules/show/report'); ?>">
 	<table width="100%" cellspacing="0">
-		<tr>
+		<tr align="center">
         <th>SiteInfo</th>
         <th>Article_id</th>
         <th>Category_id</th>
@@ -163,16 +163,17 @@ $CI->db->select('articles.article_id,category_id,article_title,site_id')->from('
 	$commment.=" start:".$start_datetime." end:".$end_datetime;
 	echo '<p>'.$commment.'</p>';
 	echo '<table width="100%" cellspacing="0">'."\n";
-	echo '<tr>'."\n";
+	echo '<tr align="center">'."\n";
 	echo '<th>article_id</th>';
 	echo '<th>article_title</th>';
 	echo '<th>category_id</th>';
 	echo '<th>category</th>';
 	echo '<th>PV</th>';
 	echo '<th>YES</th>';
-	echo '<th>YES/PV</th>';
 	echo '<th>NO</th>';
-	echo '<th>NO/PV</th>';
+	echo '<th>Answer/PV</th>';
+	echo '<th>YES/Answer</th>';
+	echo '<th>NO/Answer</th>';
 	echo '<th>Siteinfo</th>';
 	//echo '<th>referrer</th>';
 	echo '</tr>'."\n";
@@ -200,22 +201,31 @@ $CI->db->select('articles.article_id,category_id,article_title,site_id')->from('
 		echo $t_count;
 		echo '</td>'."\n";
 		echo '<td>'."\n";
+		$f_count = $CI->core_events->trigger('get_false_count_rating_log_by_article_id',$param);
+		echo $f_count;
+		echo '</td>'."\n";
+		$answer_count = (int)$t_count + (int)$f_count;
+		echo '<td>'."\n";
 		if((int) $pv == 0){
 		echo "N/A";
 		}else{
-		$t_percentage = (int)$t_count / (int) $pv * 100;
+		$percentage = (int)$answer_count / (int) $pv * 100;
+		echo $percentage.'%';
+		}
+		echo '</td>'."\n";
+		echo '<td>'."\n";
+		if((int) $answer_count == 0){
+		echo "N/A";
+		}else{
+		$t_percentage = (int)$t_count / (int) $answer_count * 100;
 		echo $t_percentage.'%';
 		}
 		echo '</td>'."\n";
 		echo '<td>'."\n";
-		$f_count = $CI->core_events->trigger('get_false_count_rating_log_by_article_id',$param);
-		echo $f_count;
-		echo '</td>'."\n";
-		echo '<td>'."\n";
-		if((int) $pv == 0){
+		if((int) $answer_count == 0){
 		echo "N/A";
 		}else{
-		$f_percentage = (int)$f_count / (int) $pv * 100;
+		$f_percentage = (int)$f_count / (int) $answer_count * 100;
 		echo $f_percentage.'%';
 		}
 		echo '</td>'."\n";

@@ -1191,7 +1191,7 @@ class site_events
 		}else{
 			$useragent = $CI->input->user_agent();
 			if($this->is_mobile($useragent)){
-				redirect('http://mobile.fms-alpha.com'); 
+				redirect('https://mobile.fms-beta.com/static/guide/contact/'); 
 			}else{
 				redirect('https://www.fms-beta.com/Support/CSMail.asp'); 
 			}
