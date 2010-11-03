@@ -56,7 +56,7 @@ class Category extends Controller
 	*/
 	function index($uri='')
 	{
-        if(	$this->core_events->trigger('viewcategory', $uri) == ""){
+        if(	strcmp($this->core_events->trigger('viewcategory', $uri),"") == 0){
 		if($uri<>'' && $uri<>'index') 
 		{
 			$uri = $this->input->xss_clean($uri);

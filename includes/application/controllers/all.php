@@ -53,7 +53,7 @@ class All extends Controller
 	*/
 	function index()
 	{
-		if(	$this->core_events->trigger('viewallarticles') == ""){
+		if(	strcmp($this->core_events->trigger('viewallarticles'),"") == 0){
 		$data['parents'] = $this->category_model->get_categories_by_parent(0);
 		foreach($data['parents']->result() as $row)
 		{

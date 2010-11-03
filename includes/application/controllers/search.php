@@ -42,7 +42,7 @@ class Search extends Controller
 		$data['title'] = $this->init_model->get_setting('site_name');
 		$data['cat_tree'] = $this->category_model->get_cats_for_select();
 		
-		if($this->core_events->trigger('searchresult')==""){
+		if(strcmp($this->core_events->trigger('searchresult'),"") == 0){
 
 		$input = $this->input->post('searchtext', TRUE);
 		$category = (int)$this->input->post('category', TRUE);

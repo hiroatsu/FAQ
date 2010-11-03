@@ -57,7 +57,7 @@ class Article extends Controller
 		$this->load->helper('form');
 		$this->load->helper('cookie');
 		$this->load->helper('gravatar');
-		if($this->core_events->trigger('viewarticle', $uri)==""){
+		if(strcmp($this->core_events->trigger('viewarticle', $uri),"") == 0){
 		$data['title'] = $this->init_model->get_setting('site_name');
 		if($uri<>'' && $uri<>'index') 
 		{
@@ -213,7 +213,14 @@ class Article extends Controller
 		$this->db->where('article_id', $article_id);
 		$this->db->update('articles');
 		$this->session->set_flashdata('rating', TRUE);
-		redirect('article/'.$article_uri.'/#rating'); 
+		$param = array(
+			'article_id'=> $article_id,
+			'article_uri'=>$article_uri,
+			'rating'=>$rating
+		);
+		if($this->core_events->trigger('addrating',$param) ===""){
+			redirect('article/'.$article_uri.'/#rating'); 
+		}
 	}
 	
 	// ------------------------------------------------------------------------

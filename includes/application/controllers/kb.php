@@ -63,7 +63,7 @@ class Kb extends Controller
 		$this->load->model('article_model');
 		$this->load->model('tags_model');
 		
-		if ($this->core_events->trigger('viewtop') == ""){
+		if (strcmp($this->core_events->trigger('viewtop'),"") == 0){
 		$this->benchmark->mark('cats_start');
 		$data['parents'] = $this->category_model->get_categories_by_parent(0);
 		$data['cat_tree'] = $this->category_model->get_cats_for_select();
