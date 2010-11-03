@@ -267,8 +267,12 @@ class site_events
 		$CI =& get_instance();
 		$useragent = $CI->input->user_agent();
 		$is_shiftjis = $this->is_shiftjis($useragent);
-		
+		if($is_shiftjis){
 		$input = $this->convertShiftjisToUtf($CI->input->post('searchtext', TRUE));
+		}else{
+		$input = $CI->input->post('searchtext', TRUE);
+		}
+		
 		$category = (int)$CI->input->post('category', TRUE);
 		
 		if($input <> '' || $category <> '')
