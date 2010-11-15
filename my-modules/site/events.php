@@ -381,7 +381,7 @@ class site_events
 		$useragent = $CI->input->user_agent();
 
 		$CI->db->from('categories');
-		$CI->db->join('categories2fujisan', 'categories.cat_id = categories2fujisan.category_id', 'left');
+		$CI->db->join('categories2site', 'categories.cat_id = categories2site.category_id', 'left');
 		$CI->db->orderby('cat_order', 'DESC')->orderby('cat_name', 'asc')->where('cat_parent', $id)->where('cat_display', 'Y');
 		$CI->db->where('site_id', 2);
 		$query = $CI->db->get();
@@ -401,7 +401,7 @@ class site_events
 
 		$id = (int) $cat_id;	
 		$CI->db->from('categories');
-		$CI->db->join('categories2fujisan', 'categories.cat_id = categories2fujisan.category_id', 'left');
+		$CI->db->join('categories2site', 'categories.cat_id = categories2site.category_id', 'left');
 		$CI->db->orderby('cat_order', 'DESC')->orderby('cat_name', 'asc')->where('cat_parent', $id)->where('cat_display', 'Y');
 		$useragent = $CI->input->user_agent();
 		if($this->is_mobile($useragent) == false)
@@ -430,7 +430,7 @@ class site_events
 
 		$id = (int) $cat_id;	
 		$CI->db->from('categories');
-		$CI->db->join('categories2fujisan', 'categories.cat_id = categories2fujisan.category_id', 'left');
+		$CI->db->join('categories2site', 'categories.cat_id = categories2site.category_id', 'left');
 		$CI->db->orderby('cat_order', 'DESC')->orderby('cat_name', 'asc')->where('cat_parent', $id)->where('cat_display', 'Y');
 		$useragent = $CI->input->user_agent();
 		if($this->is_mobile($useragent) == false)
@@ -725,7 +725,7 @@ class site_events
 	       $CI =& get_instance();
 	       $CI->db->distinct();
 	       $CI->db->from('categories');
-	       $CI->db->join('categories2fujisan', 'categories.cat_id = categories2fujisan.category_id', 'left');
+	       $CI->db->join('categories2site', 'categories.cat_id = categories2site.category_id', 'left');
 	       $CI->db->orderby('cat_order', 'DESC')->orderby('cat_name', 'asc')->where('cat_display', 'Y');
 		$useragent = $CI->input->user_agent();
 		if($this->is_mobile($useragent) == false)
@@ -757,7 +757,7 @@ class site_events
 	    $CI =& get_instance();
 	    $CI->db->distinct();
 	    $CI->db->from('categories');
-	    $CI->db->join('categories2fujisan', 'categories.cat_id = categories2fujisan.category_id', 'left');
+	    $CI->db->join('categories2site', 'categories.cat_id = categories2site.category_id', 'left');
 	    $CI->db->orderby('cat_order', 'DESC')->orderby('cat_name', 'asc')->where('cat_parent', 0)->where('cat_display', 'Y');
 		$useragent = $CI->input->user_agent();
 		if($this->is_mobile($useragent) == false)
@@ -822,7 +822,7 @@ class site_events
 	    $CI =& get_instance();
 	    $CI->db->distinct();
 	    $CI->db->from('categories');
-	    $CI->db->join('categories2fujisan', 'categories.cat_id = categories2fujisan.category_id', 'left');
+	    $CI->db->join('categories2site', 'categories.cat_id = categories2site.category_id', 'left');
 	    $CI->db->orderby('cat_order', 'DESC')->orderby('cat_name', 'asc')->where('cat_parent', $parent)->where('cat_display', 'Y');
 		$useragent = $CI->input->user_agent();
 
@@ -840,7 +840,7 @@ class site_events
 	function get_cat_by_uri_with_useragent($uri,$useragent=''){
 	    $CI =& get_instance();
 		$CI->db->from('categories');
-	    $CI->db->join('categories2fujisan', 'categories.cat_id = categories2fujisan.category_id', 'left');
+	    $CI->db->join('categories2site', 'categories.cat_id = categories2site.category_id', 'left');
 		if($useragent == '')
 		{
 			$useragent = $CI->input->user_agent();
@@ -864,7 +864,7 @@ class site_events
 		$id = (int)$id;
 		$CI->db->from('articles');
 		$CI->db->join('article2cat', 'articles.article_id = article2cat.article_id', 'left');
-		$CI->db->join('articles2fujisan', 'articles.article_id = articles2fujisan.article_id', 'left');
+		$CI->db->join('articles2site', 'articles.article_id = articles2site.article_id', 'left');
 		$CI->db->where('category_id', $id);
 		$CI->db->where('article_display', 'Y');
 		if($useragent == '')
@@ -1089,7 +1089,7 @@ class site_events
 		$CI =& get_instance();
 		$arr = array();
 		$CI->db->select('cat_id,cat_uri,cat_name,cat_description')->from('categories'); 
-	    $CI->db->join('categories2fujisan', 'categories.cat_id = categories2fujisan.category_id', 'left');
+	    $CI->db->join('categories2site', 'categories.cat_id = categories2site.category_id', 'left');
 		$CI->db->orderby('cat_order', 'DESC')->orderby('cat_name', 'asc')->where('cat_parent', $parent);
 		$useragent = $CI->input->user_agent();
 		if($this->is_mobile($useragent) == false)
@@ -1148,7 +1148,7 @@ class site_events
 		$CI =& get_instance();
 		$number = (int)$number;
 		$CI->db->select('article_uri,article_title')->from('articles');
-		$CI->db->join('articles2fujisan', 'articles.article_id = articles2fujisan.article_id', 'left');
+		$CI->db->join('articles2site', 'articles.article_id = articles2site.article_id', 'left');
 		$useragent = $CI->input->user_agent();
 		if($this->is_mobile($useragent) == false)
 		{
@@ -1191,9 +1191,9 @@ class site_events
 		}else{
 			$useragent = $CI->input->user_agent();
 			if($this->is_mobile($useragent)){
-				redirect('https://mobile.fms-beta.com/static/guide/contact/'); 
+				redirect(''); 
 			}else{
-				redirect('https://www.fms-beta.com/Support/CSMail.asp'); 
+				redirect(''); 
 			}
 		}
 	}

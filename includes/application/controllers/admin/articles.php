@@ -131,7 +131,7 @@ class Articles extends Controller
 		//modification for management module add site_id search
 		if($this->input->post('a_site_id') != 0)
 		{
-		$this->db->join('articles2fujisan', 'articles.article_id = articles2fujisan.article_id', 'left');
+		$this->db->join('articles2site', 'articles.article_id = articles2site.article_id', 'left');
 		}
 		// User Level
 		if ($this->session->userdata('level') == 4)
@@ -331,6 +331,7 @@ class Articles extends Controller
 				'article_display' => $this->input->post('article_display', TRUE),
 				'article_order' => $this->input->post('article_order', TRUE)
 			);
+			$this->core_events->trigger('create_article_log',$edit_data);
 			if ($this->article_model->edit_article($id, $edit_data))
 			{
 				//$this->tags_model->insert_tags($id, $this->input->post('tags'));

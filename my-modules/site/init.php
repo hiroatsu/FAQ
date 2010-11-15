@@ -20,24 +20,24 @@ function install()
 {
         $CI =& get_instance();
 	    $CI->load->dbforge();
-        if ( ! $CI->db->table_exists('articles2fujisan'))
+        if ( ! $CI->db->table_exists('articles2site'))
         {
         $CI->dbforge->add_field("article_id int(20) NOT NULL");
         $CI->dbforge->add_field("site_id int(20) default NULL");
         $CI->dbforge->add_key('article_id', TRUE);
-        if($CI->dbforge->create_table('articles2fujisan'))
+        if($CI->dbforge->create_table('articles2site'))
         {
-        //      return 'articles2fujisan table installed...<br />';
+        //      return 'articles2site table installed...<br />';
         }
         }
-        if ( ! $CI->db->table_exists('categories2fujisan'))
+        if ( ! $CI->db->table_exists('categories2site'))
         {
                 $CI->dbforge->add_field("category_id int(20) default NULL");
         $CI->dbforge->add_field("site_id int(20) default NULL");
         $CI->dbforge->add_key('category_id', TRUE);
-        if($CI->dbforge->create_table('categories2fujisan'))
+        if($CI->dbforge->create_table('categories2site'))
         {
-        //        return 'categories2fujisan table installed...<br />';
+        //        return 'categories2site table installed...<br />';
         }
         }	
         if ( ! $CI->db->table_exists('siteinfo'))
@@ -75,7 +75,7 @@ function install()
 		$CI->dbforge->add_key('id', TRUE);
         if($CI->dbforge->create_table('clickinfo'))
         {
-        //      return 'articles2fujisan table installed...<br />';
+        //      return 'articles2site table installed...<br />';
         }
         }
 
@@ -91,12 +91,29 @@ function install()
 		$CI->dbforge->add_key('id', TRUE);
         if($CI->dbforge->create_table('rating_log'))
         {
-        //      return 'articles2fujisan table installed...<br />';
+        //      return 'articles2site table installed...<br />';
         }
         }
-
-
-
+		if ( ! $CI->db->table_exists('articles_log'))
+        {
+		$fields = array(
+			'id'=> array('type' => 'INT','constraint'=>20,'unsigned'=> TRUE,'auto_increment'=> TRUE)
+		);	
+        $CI->dbforge->add_field($fields);
+		$CI->dbforge->add_field("article_id int(20) NOT NULL");
+	    $CI->dbforge->add_field("article_uri varchar(55) default '0'");
+    	$CI->dbforge->add_field("article_title varchar(255) default ''");
+    	$CI->dbforge->add_field("article_keywords varchar(255) default ''");
+    	$CI->dbforge->add_field("article_description text NULL");
+    	$CI->dbforge->add_field("article_short_desc text NULL");
+		$CI->dbforge->add_field("modified_datetime datetime default NULL");
+		$CI->dbforge->add_field("modified_user int(11) NOT NULL default '0'");
+		$CI->dbforge->add_key('id', TRUE);
+        if($CI->dbforge->create_table('articles_log'))
+        {
+        //      return 'articles2site table installed...<br />';
+        }
+        }
 }
 
 // ------------------------------------------------------------------------
@@ -117,7 +134,7 @@ function uninstall()
 {
 	//$CI =& get_instance();
 	//$CI->load->dbforge();
-	//$CI->dbforge->drop_table('articles2fujisan');
-       //$CI->dbforge->drop_table('categories2fujisan');
+	//$CI->dbforge->drop_table('articles2site');
+       //$CI->dbforge->drop_table('categories2site');
 //	return 'test table dropped';
 }

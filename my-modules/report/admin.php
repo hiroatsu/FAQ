@@ -122,7 +122,7 @@ $CI->db->select('articles.article_id,category_id,article_title,site_id')->from('
 	$CI->db->join('article2cat', 'articles.article_id = article2cat.article_id', 'left');
 	$commment="search term:";
 	if(isset($_POST['a_site_id']) && $_POST['a_site_id'] !== ''){
-		$CI->db->join('articles2fujisan', 'articles.article_id = articles2fujisan.article_id', 'left');				
+		$CI->db->join('articles2site', 'articles.article_id = articles2site.article_id', 'left');				
 		$site_id = (int)$_POST['a_site_id'];
 		if($site_id == 0){
 			$commment.=" SiteInfo:ALL";
@@ -209,7 +209,7 @@ $CI->db->select('articles.article_id,category_id,article_title,site_id')->from('
 		if((int) $pv == 0){
 		echo "N/A";
 		}else{
-		$percentage = (int)$answer_count / (int) $pv * 100;
+		$percentage = ceil((int)$answer_count / (int) $pv * 100);
 		echo $percentage.'%';
 		}
 		echo '</td>'."\n";
@@ -217,7 +217,7 @@ $CI->db->select('articles.article_id,category_id,article_title,site_id')->from('
 		if((int) $answer_count == 0){
 		echo "N/A";
 		}else{
-		$t_percentage = (int)$t_count / (int) $answer_count * 100;
+		$t_percentage = ceil((int)$t_count / (int) $answer_count * 100);
 		echo $t_percentage.'%';
 		}
 		echo '</td>'."\n";
@@ -225,7 +225,7 @@ $CI->db->select('articles.article_id,category_id,article_title,site_id')->from('
 		if((int) $answer_count == 0){
 		echo "N/A";
 		}else{
-		$f_percentage = (int)$f_count / (int) $answer_count * 100;
+		$f_percentage = ceil((int)$f_count / (int) $answer_count * 100);
 		echo $f_percentage.'%';
 		}
 		echo '</td>'."\n";
