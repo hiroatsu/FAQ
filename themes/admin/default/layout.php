@@ -23,8 +23,10 @@
 				<?php if ($this->session->userdata('level') <= 3): ?>
 				<a href="<?php echo site_url('admin/categories');?>" class="<?php echo ($nav=='categories') ? 'activeMenuItem' : 'inactiveMenuItem'; ?>" accesskey="C"><?php echo lang('kb_categories'); ?></a>
 				<?php endif; ?>
+                <?php if($this->core_events->trigger('management_active') == TRUE):?>
 				<?php if ($this->session->userdata('level') <= 3): ?>
 				<a href="<?php echo site_url('admin/arttags');?>" class="<?php echo ($nav=='arttags') ? 'activeMenuItem' : 'inactiveMenuItem'; ?>" accesskey="C"><?php echo 'Arttags'; ?></a>
+				<?php endif; ?>
 				<?php endif; ?>
 				<?php if ($this->session->userdata('level') <= 3): ?>
 				<a href="<?php echo site_url('admin/glossary');?>" class="<?php echo ($nav=='glossary') ? 'activeMenuItem' : 'inactiveMenuItem'; ?>" accesskey="G"><?php echo lang('kb_glossary'); ?></a>

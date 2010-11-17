@@ -53,7 +53,7 @@
 				<?php endforeach; ?>
 			</select>
 		</p>
-
+        <?php if($this->core_events->trigger('management_active') == TRUE):?>
 		<p class="row2">
 			<label for="article_arttag"><?php echo lang('kb_tag'); ?>:</label>
 			<select tabindex="6" id="article_arttag" name="arttag[]" size="10" multiple="multiple">
@@ -62,8 +62,7 @@
 				<?php endforeach; ?>
 			</select>
 		</p>
-		
-		
+		<?php endif; ?>
 		<p class="row1">
 			<label for="article_order"><?php echo lang('kb_weight'); ?>:</label>
 			<input tabindex="7" type="text" name="article_order" id="article_keywords" value="<?php echo (isset($art->article_order)) ? set_value('article_order', $art->article_order) : set_value('article_order'); ?>" />

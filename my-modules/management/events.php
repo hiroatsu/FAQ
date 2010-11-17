@@ -34,9 +34,14 @@ class management_events
      $core_events->register('th_site_info_label', $this, 'th_site_info_label');
      $core_events->register('create_article_log', $this, 'check_article_and_insert_article_log');
      $core_events->register('show_last_modified_user_and_date', $this, 'show_last_modified_user_and_date');
+     $core_events->register('management_active', $this, 'management_active');
 
 	}
 	
+	function management_active()
+	{
+		return TRUE;
+	}
 	// ------------------------------------------------------------------------
 	//For Atricle
 	function th_site_info_label()
