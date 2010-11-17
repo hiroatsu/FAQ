@@ -113,6 +113,44 @@ function install()
         //      return 'articles2site table installed...<br />';
         }
         }
+
+        if ( ! $CI->db->table_exists('arttags'))
+        {
+		$fields = array(
+				'tag_id' => array('type' => 'INT','constraint' => 11,'unsigned' => TRUE,'auto_increment' => TRUE),
+		);
+		$CI->dbforge->add_field($fields);
+		$CI->dbforge->add_field("tag_parent int(11) NOT NULL default '0'");
+		$CI->dbforge->add_field("tag_uri varchar(55) NOT NULL default '0'");
+		$CI->dbforge->add_field("tag_name varchar(255) NOT NULL default ''");
+		$CI->dbforge->add_field("tag_description text NOT NULL");
+		$CI->dbforge->add_field("tag_display char(1) NOT NULL DEFAULT 'N'");
+		$CI->dbforge->add_field("tag_order int(11) NOT NULL default '0'");
+		$CI->dbforge->add_key('tag_id', TRUE);
+		$CI->dbforge->add_key('tag_uri', TRUE);
+		$CI->dbforge->add_key('tag_name');
+		$CI->dbforge->add_key('tag_parent');
+		$CI->dbforge->add_key('tag_order');
+        	if($CI->dbforge->create_table('arttags'))
+        	{
+        	//      return 'articles2site table installed...<br />';
+        	}
+        }
+
+        if ( ! $CI->db->table_exists('articles2arttag'))
+        {
+		$CI->dbforge->add_field("article_id int(20) default NULL");
+		$CI->dbforge->add_field("arttag_id int(20) default NULL");
+
+		$CI->dbforge->add_key('article_id', TRUE);
+		$CI->dbforge->add_key('arttag_id', TRUE);
+		if($CI->dbforge->create_table('articles2arttag'))
+		{
+		//	return 'article2cat table installed...<br />';
+		}
+        }
+
+
 }
 
 // ------------------------------------------------------------------------

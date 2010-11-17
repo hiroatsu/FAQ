@@ -53,6 +53,15 @@
 				<?php endforeach; ?>
 			</select>
 		</p>
+
+		<p class="row2">
+			<label for="article_arttag"><?php echo lang('kb_tag'); ?>:</label>
+			<select tabindex="6" id="article_arttag" name="arttag[]" size="10" multiple="multiple">
+				<?php foreach($arttagoptions as $row): ?>
+					<option value="<?php echo $row['tag_id']; ?>"<?php if(isset($row['selected']) && $row['selected']=='Y') echo ' selected'; ?>><?php echo $row['tag_name']; ?></option>
+				<?php endforeach; ?>
+			</select>
+		</p>
 		
 		
 		<p class="row1">

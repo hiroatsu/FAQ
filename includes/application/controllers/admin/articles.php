@@ -43,6 +43,7 @@ class Articles extends Controller
 		$this->load->library('auth');
 		$this->auth->restrict();
 		$this->load->model('category_model');
+		$this->load->model('arttag_model');
 		$this->load->model('article_model');
 		$this->load->model('tags_model');
 	}
@@ -287,6 +288,7 @@ class Articles extends Controller
 		$this->load->helper(array('form', 'url'));
 		$data['art'] = $this->article_model->get_article_by_id($id);
 		$data['options'] = $this->category_model->get_cats_for_select('',0, $id, TRUE);
+		$data['arttagoptions'] = $this->arttag_model->get_arttags_for_select('',0, $id, TRUE);
 		$data['attach'] = $this->article_model->get_attachments($id);
 		$data['action'] = 'modify';
 		
@@ -336,6 +338,7 @@ class Articles extends Controller
 			{
 				//$this->tags_model->insert_tags($id, $this->input->post('tags'));
 				$this->category_model->insert_cats($id, $this->input->post('cat'));
+				$this->arttag_model->insert_arttags($id, $this->input->post('arttag'));
 				
 				//now file uploads
 				if ($_FILES['userfile']['name'] != "") 

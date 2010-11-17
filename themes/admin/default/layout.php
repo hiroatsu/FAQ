@@ -24,6 +24,9 @@
 				<a href="<?php echo site_url('admin/categories');?>" class="<?php echo ($nav=='categories') ? 'activeMenuItem' : 'inactiveMenuItem'; ?>" accesskey="C"><?php echo lang('kb_categories'); ?></a>
 				<?php endif; ?>
 				<?php if ($this->session->userdata('level') <= 3): ?>
+				<a href="<?php echo site_url('admin/arttags');?>" class="<?php echo ($nav=='arttags') ? 'activeMenuItem' : 'inactiveMenuItem'; ?>" accesskey="C"><?php echo 'Arttags'; ?></a>
+				<?php endif; ?>
+				<?php if ($this->session->userdata('level') <= 3): ?>
 				<a href="<?php echo site_url('admin/glossary');?>" class="<?php echo ($nav=='glossary') ? 'activeMenuItem' : 'inactiveMenuItem'; ?>" accesskey="G"><?php echo lang('kb_glossary'); ?></a>
 				<?php endif; ?>
 				<?php if ($this->session->userdata('level') == 1): ?>
