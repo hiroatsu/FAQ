@@ -20,7 +20,12 @@ class report_events
      $core_events->register('get_count_clickinfo_by_article_id', $this, 'get_count_clickinfo_by_article_id');
      $core_events->register('get_true_count_rating_log_by_article_id', $this, 'get_true_count_rating_log_by_article_id');
      $core_events->register('get_false_count_rating_log_by_article_id', $this, 'get_false_count_rating_log_by_article_id');
+     $core_events->register('create_searchrating_link', $this, 'create_searchrating_link');
 	}
+
+       function create_searchrating_link(){
+	echo '<li><a href="'.site_url('admin/modules/show/report').'"><span>SearchRating</span></a></li>';
+       }
 
 
     function insert_rating_log($data){

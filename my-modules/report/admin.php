@@ -1,7 +1,13 @@
-<h1>Report</h1>
-
-<p>search</p>
-
+	<div id="tabs">
+		<ul>
+			<li><a href="<?php echo site_url('admin/stats/');?>"><span><?php echo $this->lang->line('kb_summary'); ?></span></a></li>
+			<li><a href="<?php echo site_url('admin/stats/viewed');?>"><span><?php echo $this->lang->line('kb_most_viewed'); ?></span></a></li>
+			<li><a href="<?php echo site_url('admin/stats/searchlog');?>"><span><?php echo $this->lang->line('kb_search_log'); ?></span></a></li>
+			<li><a href="<?php echo site_url('admin/stats/rating');?>"><span>Rating</span></a></li>
+			<li><a href="<?php echo site_url('admin/modules/show/report');?>"class="active"><span>Search Rating</span></a></li>
+		</ul>
+	</div>
+<br /><br />
 <?php
 $CI =& get_instance();
 ?>

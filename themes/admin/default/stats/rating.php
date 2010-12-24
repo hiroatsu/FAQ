@@ -4,6 +4,7 @@
 		<li><a href="<?php echo site_url('admin/stats/viewed');?>"><span><?php echo lang('kb_most_viewed'); ?></span></a></li>
 		<li><a href="<?php echo site_url('admin/stats/searchlog');?>"><span><?php echo lang('kb_search_log'); ?></span></a></li>
 		<li><a href="<?php echo site_url('admin/stats/rating');?>" class="active"><span>Rating</span></a></li>
+		<?php $this->core_events->trigger('create_searchrating_link'); ?>
 	</ul>
 </div>
 <div class="clear"></div>
