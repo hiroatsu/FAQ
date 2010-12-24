@@ -137,6 +137,17 @@ class site_events
 		return $data;		
 	}
     
+	function has_rating_reply($data){
+		$ratechecked = FALSE;
+		if($data !== FALSE)
+		{
+			if(strcmp($data,'rating') == 0)
+			{
+				$ratechecked = TRUE; 
+			}			
+		}
+		return $ratechecked;		
+	}
 	// Display article page
     function viewarticle($uri='')
     {
@@ -151,7 +162,7 @@ class site_events
 			$uri = $CI->input->xss_clean($uri);
 			//[article]
 			$data = $this->set_article_info($uri); 
-
+	              $ratechecked = $this->has_rating_reply($CI->uri->segment(3));
 			if($data)
 			{
 
@@ -188,7 +199,8 @@ class site_events
 				$data['title'] = $data['article']->article_title. ' | '.$data['title'];
 				$data['meta_keywords'] = $data['article']->article_keywords;
 				$data['meta_description'] = $data['article']->article_short_desc;
-				//for attchment,comment etc
+				$data['ratechecked'] = $ratechecked;
+                            //for attchment,comment etc
 				//$data['attach'] = $CI->article_model->get_attachments($data['article']->article_id);
 				//$data['author'] = $CI->users_model->get_user_by_id($data['article']->article_author);
 				//$data['comments'] = $CI->comments_model->get_article_comments($data['article']->article_id);
@@ -208,7 +220,9 @@ class site_events
 		}
 		//For topSearch
 		$data = $this->set_category_tree_info($data);		
-
+              if($data['ratechecked'] === TRUE){
+				$data['thanks'] = $this->get_template_data_with_site_id('thanks', $data, $useragent, false);	
+              }
 		$template = 'article';
 		$dir='front';
 		
@@ -217,7 +231,6 @@ class site_events
 		{
 			$CI->output->cache($CI->init_model->get_setting('cache_time'));
 		}
-
 		// set body info
 		$data = $this->set_body_info($template, $dir, $data, $useragent,$is_shiftjis);
 
@@ -617,6 +630,10 @@ class site_events
 		$body_file =$this ->get_body_file_with_site_id($template,$data, $useragent, $is_shiftjis);
 
 		$data['topsearch'] = $this->get_template_data_with_site_id('topsearch', $data, $useragent, false);	
+              //if($data['ratechecked'] !== FALSE){
+		//		$data['thanks'] = $this->get_template_data_with_site_id('thanks', $data, $useragent, false);	
+              //}
+		//$data['thanks'] = $this->get_template_data_with_site_id('thanks', $data, $useragent, false);	
 		//file chekc if not exist load default page
 		$is_shiftjis = FALSE;
 		if ($CI->init_model->test_exists($body_file))
@@ -1411,8 +1428,12 @@ class site_events
         	$CI->db->cache_delete_all();
         }
 		if((int) $article_rating == 1){
-			$CI->core_events->trigger('thankyou');
-			return "Done";
+                     $article_uri = $data['article_uri'];
+                     //$CI->load->library('session');
+		     //	$CI->session->set_flashdata('rating', TRUE);
+			redirect('article/'.$article_uri.'/rating'); 
+			//$CI->core_events->trigger('thankyou');
+			//return "Done";
 			//$CI->load->helper('url');
 		}else{
 			$useragent = $CI->input->user_agent();
