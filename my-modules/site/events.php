@@ -514,12 +514,15 @@ class site_events
 			
 			$data['searchtext'] = $input;
 			$data['category'] = $category;
+		}else{
+		$data = array();
 		}
 		
 
 		//For topSearch
+		//$data['cat_tree'] = $this->get_cats_for_select_with_site_id();
+		$data = $this->set_category_tree_info($data);
 		$data = $this->set_siteinfo_with_site_id($useragent,$data);
-
 		$template = 'search';
 		$dir='front';
 
@@ -1271,7 +1274,6 @@ class site_events
 
 	function set_siteinfo_with_site_id($useragent,$data=NULL)
 	{
-	
 		// meta content
 		//PC
 		$CI =& get_instance();	
