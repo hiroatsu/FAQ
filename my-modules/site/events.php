@@ -27,6 +27,7 @@ class site_events
      $core_events->register('categorydata', $this, 'categorydata');
      $core_events->register('thankyou', $this, 'thankyou');
      $core_events->register('addrating', $this, 'insert_rating_log');
+     $core_events->register('viewpreviewarticle', $this, 'viewpreviewarticle');
 	}
 
     function thankyou()
@@ -102,57 +103,11 @@ class site_events
 		return "done";
     }
 
-	function display_composed_page($dir, $data, $useragent,$is_shiftjis){
-
-		$this->load_layout($dir, $data, $useragent,$is_shiftjis);
-	}
-
-	function set_body_info($template, $dir, $data, $useragent,$is_shiftjis){
-
-		$data['body'] = $this->load_base_body($template, $dir, $data, $useragent,$is_shiftjis);
-		return $data;	
-	}
-
-	function set_top_category_info(){
-
-		$data['parents'] = $this->get_categories_by_parent_based_useragent(0);
-		return $data;		
-	}
-
-	function set_most_popular_article_info($data,$num){
-
-		$data['pop'] = $this->get_most_popular_with_site_id($num);
-		return $data;		
-	}
-
-	function set_categories_info($data){
-
-		$data = $this->get_categories_based_useragent($data);
-		return $data;		
-	}
-
-	function set_category_tree_info($data){
-
-		$data['cat_tree'] = $this->get_cats_for_select_with_site_id();
-		return $data;		
-	}
-    
-	function has_rating_reply($data){
-		$ratechecked = FALSE;
-		if($data !== FALSE)
-		{
-			if(strcmp($data,'rating') == 0)
-			{
-				$ratechecked = TRUE; 
-			}			
-		}
-		return $ratechecked;		
-	}
-	// Display article page
+    // Display article page
     function viewarticle($uri='')
     {
 
-	    $CI =& get_instance();
+	    	$CI =& get_instance();
 		$useragent = $CI->input->user_agent();
 		$is_shiftjis = $this->is_shiftjis($useragent);
 
@@ -161,7 +116,8 @@ class site_events
 			// sanitize
 			$uri = $CI->input->xss_clean($uri);
 			//[article]
-			$data = $this->set_article_info($uri); 
+			$active = TRUE;
+			$data = $this->set_article_info($uri,$active,$useragent); 
 	              $ratechecked = $this->has_rating_reply($CI->uri->segment(3));
 			if($data)
 			{
@@ -241,70 +197,103 @@ class site_events
 		return "done";
     }
 
-
-	function set_arttags_related_to_article($id,$data=NULL){
-
-		$CI =& get_instance();
-		$CI->db->select('*');
-		$CI->db->from('articles2arttag');
-		$CI->db->join('arttags', 'articles2arttag.arttag_id = arttags.tag_id', 'left');
-		$CI->db->where('article_id', $id);
-		$CI->db->where('tag_display', 'Y');
-		$arttags = $CI->db->get();
-		if($arttags == NULL){
-			return $data;
-		}
-		$data['article_arttags'] = $arttags;
-		return $data;
-	}
-
-	function set_categories_related_to_article($id,$data=NULL){
-
-	    $CI =& get_instance();
-		$CI->db->select('*');
-		$CI->db->from('article2cat');
-		$CI->db->join('categories', 'article2cat.category_id = categories.cat_id', 'left');
-		$CI->db->join('categories2site', 'article2cat.category_id = categories2site.category_id', 'left');
+    // Display article page
+    function viewpreviewarticle($uri='')
+    {
+	    	$CI =& get_instance();
 		$useragent = $CI->input->user_agent();
-		if($this->is_mobile($useragent) == false)
+		$is_shiftjis = $this->is_shiftjis($useragent);
+
+		if($uri<>'' && $uri<>'index') 
 		{
-		   $CI->db->where('site_id', 1);
-		}else {
-		   $CI->db->where('site_id', 2);
-		}
-		$CI->db->where('article_id', $id);
-		$CI->db->where('cat_display', 'Y');
-		$categories = $CI->db->get();
-		if($categories == NULL){
-			return $data;
-		}
-		$data['article_cats'] = $categories;
-		return $data;
-	}
-	
-	function insert_article_click_info($data){
+			// sanitize
+			$uri = $CI->uri->segment(3, 0);
+			$sitetype = $CI->uri->segment(4, 0);
+                                     if($sitetype === 'Mobile' || $sitetype === 'mobile'){
+				if($this->is_mobile($useragent) == false){
+				$useragent = 'DoCoMo';
+				}
+			}
+			//[article]
+			$active = FALSE;
+			$data = $this->set_article_info($uri,$active,$useragent); 
+	              $ratechecked = $this->has_rating_reply($CI->uri->segment(3));
+			if($data)
+			{
+				// add hit info
+				//$CI->article_model->add_hit($data['article']->article_id);
+				// add click info
+				//$this->insert_article_click_info($data);
+				
+				//For basic setting
+				$data = $this->set_siteinfo_with_site_id($useragent,$data);
 
-	    $CI =& get_instance();
-		//for referrrer
-		$CI->load->library('user_agent');
-		$param = array(
-			'article_id' => (int) $data['article']->article_id, 
-			'visit_datetime' => date('Y-m-d H:i:s',time()), 
-			'referrer' => $CI->agent->referrer()
-		);
-		$this->insert_clickinfo($param);
-	}
-
-	function set_article_info($uri,$data=NULL){
-
-		$article = $this->get_article_by_uri_with_site_id($uri);
-		if($article == NULL){
-			return $data;
-		}else{
-			$data['article'] = $this->get_article_by_uri_with_site_id($uri);
+				//format description
+				$data['article']->article_description = $CI->article_model->glossary($data['article']->article_description);
+				
+				// call hooks
+				$arr = array('article_id' => $data['article']->article_id, 'article_title' => $data['article']->article_title);
+				if($CI->core_events->trigger('article/title', $arr) != '')
+				{
+					$data['article']->article_description = $CI->core_events->trigger('article/title', $arr);
+				}
+				$arr = array('article_id' => $data['article']->article_id, 'article_description' => $data['article']->article_description);
+				if($CI->core_events->trigger('article/description', $arr) != '')
+				{
+					$data['article']->article_description = $CI->core_events->trigger('article/description', $arr);
+				}
+				
+				//categories info related to article [article_cats]
+				$data = $this->set_categories_related_to_article($data['article']->article_id,$data);
+				
+				//arttags info related to article [article_arttags]
+				$data = $this->set_arttags_related_to_article($data['article']->article_id,$data);
+				
+				//Modify meta data				
+				$data['title'] = $data['article']->article_title. ' | '.$data['title'];
+				$data['meta_keywords'] = $data['article']->article_keywords;
+				$data['meta_description'] = $data['article']->article_short_desc;
+				$data['ratechecked'] = $ratechecked;
+                            //for attchment,comment etc
+				//$data['attach'] = $CI->article_model->get_attachments($data['article']->article_id);
+				//$data['author'] = $CI->users_model->get_user_by_id($data['article']->article_author);
+				//$data['comments'] = $CI->comments_model->get_article_comments($data['article']->article_id);
+				//$data['comments_total'] = $CI->comments_model->get_article_comments_count($data['article']->article_id);
+				//$data['comment_author'] = get_cookie('kb_author', TRUE);
+				//$data['comment_author_email'] = get_cookie('kb_email', TRUE);
+				//$data['comment_template'] = $CI->init_model->load_body('comments', 'front', $data);
+			}
+			else
+			{
+				redirect('/kb');
+			}
 		}
-		return $data;
-	}
+		else
+		{
+				redirect('/kb');
+		}
+		//For topSearch
+		$data = $this->set_category_tree_info($data);		
+              if($data['ratechecked'] === TRUE){
+				$data['thanks'] = $this->get_template_data_with_site_id('thanks', $data, $useragent, false);	
+              }
+		$template = 'article';
+		$dir='front';
+		
+		// are we caching?
+		if ($CI->init_model->get_setting('cache_time') > 0)
+		{
+			$CI->output->cache($CI->init_model->get_setting('cache_time'));
+		}
+		// set body info
+		$data = $this->set_body_info($template, $dir, $data, $useragent,$is_shiftjis);
+
+		$this->display_composed_page($dir, $data, $useragent,$is_shiftjis);
+		// finally show the last hook
+		$CI->core_events->trigger('display_template');	
+
+		return "done";
+      }
 
     function viewcategory($uri='')
     {
@@ -376,26 +365,6 @@ class site_events
 		$CI->core_events->trigger('display_template');	
 
 		return "done";
-	}
-
-	function set_category_info($uri,$useragent,$data=NULL){
-
-		$category =$this->get_cat_by_uri_with_useragent($uri,$useragent);
-		if($category == NULL){
-			return $data;
-		}
-		$data['cat']=$category;
-		return $data;
-	}
-
-	function set_parent_category_info($id,$data=NULL){
-
-		$category =$this->get_categories_by_parent_based_useragent($id);
-		if($category == NULL){
-			return $data;
-		}
-		$data['parents'] = $category; 
-		return $data;
 	}
 
     function viewarttag($uri='')
@@ -474,8 +443,10 @@ class site_events
 			if($this->is_mobile($useragent) == false)
 			{
 		   	$CI->db->where('site_id', 1);
+			$CI->db->orwhere('site_id', 0);
 			}else {
 		   	$CI->db->where('site_id', 2);
+			$CI->db->orwhere('site_id', 0);
 			}
 			if($category)
 			{
@@ -543,82 +514,21 @@ class site_events
 		return "done";
 	}
 
-    function categorydata($cat_id)
-    {
+    function viewallarticles(){
 
-		$id = $cat_id;
-	    $CI =& get_instance();
-		$useragent = $CI->input->user_agent();
-
-		$CI->db->from('categories');
-		$CI->db->join('categories2site', 'categories.cat_id = categories2site.category_id', 'left');
-		$CI->db->orderby('cat_order', 'DESC')->orderby('cat_name', 'asc')->where('cat_parent', $id)->where('cat_display', 'Y');
-		$CI->db->where('site_id', 2);
-		$query = $CI->db->get();
-		echo "1";
-		$data['category_data'] = $query;
-		return $data; 
-	}
-
-
-    function content_secondcatetory($cat_id)
-    {
-
-		$data['cat_id'] = $cat_id;
 	    $CI =& get_instance();
 		$useragent = $CI->input->user_agent();
 		$is_shiftjis = $this->is_shiftjis($useragent);
-		$data = $this->set_siteinfo_with_site_id($useragent,$data);
-
-		$id = (int) $cat_id;	
-		$CI->db->from('categories');
-		$CI->db->join('categories2site', 'categories.cat_id = categories2site.category_id', 'left');
-		$CI->db->orderby('cat_order', 'DESC')->orderby('cat_name', 'asc')->where('cat_parent', $id)->where('cat_display', 'Y');
-		$useragent = $CI->input->user_agent();
-		if($this->is_mobile($useragent) == false)
+		
+		$data['parents'] = $this->get_categories_by_parent_based_useragent(0);
+		foreach($data['parents']->result() as $row)
 		{
-		   $CI->db->where('site_id', 1);
-		}else {
-		   $CI->db->where('site_id', 2);
+			$data['articles'][$row->cat_id] =$CI->article_model->get_articles_by_catid($row->cat_id);
 		}
-		$query = $CI->db->get();
-		$data['query'] = $query;
-		$data = $this->set_siteinfo_with_site_id($useragent,$data);
-        if ($is_shiftjis){
-            return $this->convertUtfToShiftjis($CI->load->view('front/'.$data['template_location'].'/secondcategory.php', $data));
-		}else{
-			return $CI->load->view('front/'.$data['template_location'].'/secondcategory.php', $data);
-		}
-	}
+		$data['title'] = $CI->init_model->get_setting('site_name');
+		$this->display_template_based_useragent('all',$data,$useragent,$is_shiftjis,'front');
 
-
-    function content_thirdcatetory($cat_id)
-    {
-
-		$data['cat_id'] = $cat_id;
-	    $CI =& get_instance();
-		$useragent = $CI->input->user_agent();
-		$is_shiftjis = $this->is_shiftjis($useragent);
-
-		$id = (int) $cat_id;	
-		$CI->db->from('categories');
-		$CI->db->join('categories2site', 'categories.cat_id = categories2site.category_id', 'left');
-		$CI->db->orderby('cat_order', 'DESC')->orderby('cat_name', 'asc')->where('cat_parent', $id)->where('cat_display', 'Y');
-		$useragent = $CI->input->user_agent();
-		if($this->is_mobile($useragent) == false)
-		{
-		   $CI->db->where('site_id', 1);
-		}else {
-		   $CI->db->where('site_id', 2);
-		}
-		$query = $CI->db->get();
-		$data['query'] = $query;
-		$data = $this->set_siteinfo_with_site_id($useragent,$data);
-        if ($is_shiftjis){
-            return $this->convertUtfToShiftjis($CI->load->view('front/'.$data['template_location'].'/thirdcategory.php', $data));
-		}else{
-			return $CI->load->view('front/'.$data['template_location'].'/thirdcategory.php', $data);
-		}
+		return "done";
 	}
 
 	/**
@@ -745,22 +655,218 @@ class site_events
 		}
 	}
 
-    function viewallarticles(){
+    function set_arttags_related_to_article($id,$data=NULL){
 
+		$CI =& get_instance();
+		$CI->db->select('*');
+		$CI->db->from('articles2arttag');
+		$CI->db->join('arttags', 'articles2arttag.arttag_id = arttags.tag_id', 'left');
+		$CI->db->where('article_id', $id);
+		$CI->db->where('tag_display', 'Y');
+		$arttags = $CI->db->get();
+		if($arttags == NULL){
+			return $data;
+		}
+		$data['article_arttags'] = $arttags;
+		return $data;
+	}
+
+	function display_composed_page($dir, $data, $useragent,$is_shiftjis){
+
+		$this->load_layout($dir, $data, $useragent,$is_shiftjis);
+	}
+
+	function set_body_info($template, $dir, $data, $useragent,$is_shiftjis){
+
+		$data['body'] = $this->load_base_body($template, $dir, $data, $useragent,$is_shiftjis);
+		return $data;	
+	}
+
+	function set_top_category_info(){
+
+		$data['parents'] = $this->get_categories_by_parent_based_useragent(0);
+		return $data;		
+	}
+
+	function set_most_popular_article_info($data,$num){
+
+		$data['pop'] = $this->get_most_popular_with_site_id($num);
+		return $data;		
+	}
+
+	function set_categories_info($data){
+
+		$data = $this->get_categories_based_useragent($data);
+		return $data;		
+	}
+
+	function set_category_tree_info($data){
+
+		$data['cat_tree'] = $this->get_cats_for_select_with_site_id();
+		return $data;		
+	}
+    
+	function has_rating_reply($data){
+		$ratechecked = FALSE;
+		if($data !== FALSE)
+		{
+			if(strcmp($data,'rating') == 0)
+			{
+				$ratechecked = TRUE; 
+			}			
+		}
+		return $ratechecked;		
+	}
+
+
+	function set_categories_related_to_article($id,$data=NULL){
+
+	    $CI =& get_instance();
+		$CI->db->select('*');
+		$CI->db->from('article2cat');
+		$CI->db->join('categories', 'article2cat.category_id = categories.cat_id', 'left');
+		$CI->db->join('categories2site', 'article2cat.category_id = categories2site.category_id', 'left');
+		$useragent = $CI->input->user_agent();
+		if($this->is_mobile($useragent) == false)
+		{
+		   $CI->db->where('site_id', 1);
+		}else {
+		   $CI->db->where('site_id', 2);
+		}
+		$CI->db->where('article_id', $id);
+		$CI->db->where('cat_display', 'Y');
+		$categories = $CI->db->get();
+		if($categories == NULL){
+			return $data;
+		}
+		$data['article_cats'] = $categories;
+		return $data;
+	}
+	
+	function insert_article_click_info($data){
+
+	    $CI =& get_instance();
+		//for referrrer
+		$CI->load->library('user_agent');
+		$param = array(
+			'article_id' => (int) $data['article']->article_id, 
+			'visit_datetime' => date('Y-m-d H:i:s',time()), 
+			'referrer' => $CI->agent->referrer()
+		);
+		$this->insert_clickinfo($param);
+	}
+
+	function set_article_info($uri,$active,$useragent,$data=NULL){
+
+		$article = $this->get_article_by_uri_with_site_id($uri,$active,$useragent);
+		if($article == NULL){
+			return $data;
+		}else{
+			$data['article'] = $this->get_article_by_uri_with_site_id($uri,$active,$useragent);
+		}
+		return $data;
+	}
+
+
+	function set_category_info($uri,$useragent,$data=NULL){
+
+		$category =$this->get_cat_by_uri_with_useragent($uri,$useragent);
+		if($category == NULL){
+			return $data;
+		}
+		$data['cat']=$category;
+		return $data;
+	}
+
+	function set_parent_category_info($id,$data=NULL){
+
+		$category =$this->get_categories_by_parent_based_useragent($id);
+		if($category == NULL){
+			return $data;
+		}
+		$data['parents'] = $category; 
+		return $data;
+	}
+
+
+    function categorydata($cat_id)
+    {
+
+		$id = $cat_id;
+	    $CI =& get_instance();
+		$useragent = $CI->input->user_agent();
+
+		$CI->db->from('categories');
+		$CI->db->join('categories2site', 'categories.cat_id = categories2site.category_id', 'left');
+		$CI->db->orderby('cat_order', 'DESC')->orderby('cat_name', 'asc')->where('cat_parent', $id)->where('cat_display', 'Y');
+		$CI->db->where('site_id', 2);
+		$query = $CI->db->get();
+		echo "1";
+		$data['category_data'] = $query;
+		return $data; 
+	}
+
+
+    function content_secondcatetory($cat_id)
+    {
+
+		$data['cat_id'] = $cat_id;
 	    $CI =& get_instance();
 		$useragent = $CI->input->user_agent();
 		$is_shiftjis = $this->is_shiftjis($useragent);
-		
-		$data['parents'] = $this->get_categories_by_parent_based_useragent(0);
-		foreach($data['parents']->result() as $row)
-		{
-			$data['articles'][$row->cat_id] =$CI->article_model->get_articles_by_catid($row->cat_id);
-		}
-		$data['title'] = $CI->init_model->get_setting('site_name');
-		$this->display_template_based_useragent('all',$data,$useragent,$is_shiftjis,'front');
+		$data = $this->set_siteinfo_with_site_id($useragent,$data);
 
-		return "done";
+		$id = (int) $cat_id;	
+		$CI->db->from('categories');
+		$CI->db->join('categories2site', 'categories.cat_id = categories2site.category_id', 'left');
+		$CI->db->orderby('cat_order', 'DESC')->orderby('cat_name', 'asc')->where('cat_parent', $id)->where('cat_display', 'Y');
+		$useragent = $CI->input->user_agent();
+		if($this->is_mobile($useragent) == false)
+		{
+		   $CI->db->where('site_id', 1);
+		}else {
+		   $CI->db->where('site_id', 2);
+		}
+		$query = $CI->db->get();
+		$data['query'] = $query;
+		$data = $this->set_siteinfo_with_site_id($useragent,$data);
+        if ($is_shiftjis){
+            return $this->convertUtfToShiftjis($CI->load->view('front/'.$data['template_location'].'/secondcategory.php', $data));
+		}else{
+			return $CI->load->view('front/'.$data['template_location'].'/secondcategory.php', $data);
+		}
 	}
+
+
+    function content_thirdcatetory($cat_id)
+    {
+
+		$data['cat_id'] = $cat_id;
+	    $CI =& get_instance();
+		$useragent = $CI->input->user_agent();
+		$is_shiftjis = $this->is_shiftjis($useragent);
+
+		$id = (int) $cat_id;	
+		$CI->db->from('categories');
+		$CI->db->join('categories2site', 'categories.cat_id = categories2site.category_id', 'left');
+		$CI->db->orderby('cat_order', 'DESC')->orderby('cat_name', 'asc')->where('cat_parent', $id)->where('cat_display', 'Y');
+		$useragent = $CI->input->user_agent();
+		if($this->is_mobile($useragent) == false)
+		{
+		   $CI->db->where('site_id', 1);
+		}else {
+		   $CI->db->where('site_id', 2);
+		}
+		$query = $CI->db->get();
+		$data['query'] = $query;
+		$data = $this->set_siteinfo_with_site_id($useragent,$data);
+        if ($is_shiftjis){
+            return $this->convertUtfToShiftjis($CI->load->view('front/'.$data['template_location'].'/thirdcategory.php', $data));
+		}else{
+			return $CI->load->view('front/'.$data['template_location'].'/thirdcategory.php', $data);
+		}
+	}
+
 
 	function display_template_based_useragent($template,$data,$useragent,$is_shiftjis, $dir='front')
 	{
@@ -801,106 +907,6 @@ class site_events
 		$this -> display_template($data,$useragent,$is_shiftjis);
 	}
 	
-	
-	function is_mobile($useragent)
-	{
-        if ($this -> isDoCoMo($useragent)) {
-            return true;
-        } elseif ($this -> isEZweb($useragent)) {
-            return true;
-        } elseif ($this ->isSoftBank($useragent)) {
-            return true;
-        } elseif ($this ->isWillcom($useragent)) {
-            return true;
-        }
-	        return false;
-    }
-
-     function is_shiftjis($useragent)
-	{
-        if ($this -> isDoCoMo($useragent)) {
-            return true;
-        } elseif ($this -> isEZweb($useragent)) {
-            return false;
-        } elseif ($this ->isSoftBank($useragent)) {
-            return true;
-        } elseif ($this ->isWillcom($useragent)) {
-            return true;
-        }
-	 return true;
-    }
-
-    function isDoCoMo($useragent = null)
-    {
-        if (is_null($useragent)) {
-	        $CI =& get_instance();
-			$$useragent = $CI->input->user_agent();
-        }
-
-        if (preg_match('!^DoCoMo!', $useragent)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    function isEZweb($useragent = null)
-    {
-        if (is_null($useragent)) {
-	        $CI =& get_instance();
-			$$useragent = $CI->input->user_agent();
-        }
-
-        if (preg_match('!^KDDI-!', $useragent)) {
-            return true;
-        } elseif (preg_match('!^UP\.Browser!', $useragent)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    function isSoftBank($useragent = null)
-    {
-        if (is_null($useragent)) {
-	        $CI =& get_instance();
-			$useragent = $CI->input->user_agent();
-        }
-
-        if (preg_match('!^SoftBank!', $useragent)) {
-            return true;
-        } elseif (preg_match('!^Semulator!', $useragent)) {
-            return true;
-        } elseif (preg_match('!^Vodafone!', $useragent)) {
-            return true;
-        } elseif (preg_match('!^Vemulator!', $useragent)) {
-            return true;
-        } elseif (preg_match('!^MOT-!', $useragent)) {
-            return true;
-        } elseif (preg_match('!^MOTEMULATOR!', $useragent)) {
-            return true;
-        } elseif (preg_match('!^J-PHONE!', $useragent)) {
-            return true;
-        } elseif (preg_match('!^J-EMULATOR!', $useragent)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    function isWillcom($useragent = null)
-    {
-        if (is_null($useragent)) {
-	        $CI =& get_instance();
-			$useragent = $CI->input->user_agent();
-        }
-
-        if (preg_match('!^Mozilla/3\.0\((?:DDIPOCKET|WILLCOM);!', $useragent)) {
-            return true;
-        }
-
-        return false;
-    }
 	
     /**
      * Checks whether or not the user agent is Willcom by a given user agent string.
@@ -1404,50 +1410,6 @@ class site_events
 		return $query;
 	}
 
-	function insert_clickinfo($data)
-	{
-
-        $CI =& get_instance();
-		$CI->db->insert('clickinfo', $data);
-        if ($CI->db->affected_rows() > 0){
-        	$CI->db->cache_delete_all();
-        }
-	}
-
-    function insert_rating_log($data){
-
-		$CI =& get_instance();
-
-		$article_id = (int) $data['article_id'];
-		$article_rating = (int) $data['rating'];
-		$param = array(
-				'article_id' => $article_id, 
-				'datetime' => date('Y-m-d H:i:s',time()),
-				'article_rating'=> $article_rating
-		);
-		$CI->db->insert('rating_log', $param);
-        if ($CI->db->affected_rows() > 0){
-        	$CI->db->cache_delete_all();
-        }
-		if((int) $article_rating == 1){
-                     $article_uri = $data['article_uri'];
-                     //$CI->load->library('session');
-		     //	$CI->session->set_flashdata('rating', TRUE);
-			redirect('article/'.$article_uri.'/rating'); 
-			//$CI->core_events->trigger('thankyou');
-			//return "Done";
-			//$CI->load->helper('url');
-		}else{
-			$useragent = $CI->input->user_agent();
-			if($this->is_mobile($useragent)){
-				redirect(''); 
-			}else{
-				redirect(''); 
-			}
-		}
-	}
-
-
 	/**
 	 * Get Article By arttag ID.
 	 *
@@ -1540,20 +1502,23 @@ class site_events
 		}
 	}
 
-	function get_article_by_uri_with_site_id($uri)
+	function get_article_by_uri_with_site_id($uri,$active,$useragent)
 	{
 
 		$CI =& get_instance();
 		$CI->db->from('articles');
 		$CI->db->join('articles2site', 'articles.article_id = articles2site.article_id', 'left');
-		$useragent = $CI->input->user_agent();
 		if($this->is_mobile($useragent) == false)
 		{
 		   $CI->db->where('site_id', 1);
 		}else {
 		   $CI->db->where('site_id', 2);
 		}
+		if($active===TRUE){
 		$CI->db->where('article_uri', $uri)->where('article_display', 'Y');
+		}else{
+		$CI->db->where('article_uri', $uri);
+		}
 		$query = $CI->db->get();
 		if ($query->num_rows > 0)
 		{
@@ -1566,6 +1531,151 @@ class site_events
 			return FALSE;
 		}
 	}
+
+
+
+	function insert_clickinfo($data)
+	{
+
+        $CI =& get_instance();
+		$CI->db->insert('clickinfo', $data);
+        if ($CI->db->affected_rows() > 0){
+        	$CI->db->cache_delete_all();
+        }
+	}
+
+    function insert_rating_log($data){
+
+		$CI =& get_instance();
+
+		$article_id = (int) $data['article_id'];
+		$article_rating = (int) $data['rating'];
+		$param = array(
+				'article_id' => $article_id, 
+				'datetime' => date('Y-m-d H:i:s',time()),
+				'article_rating'=> $article_rating
+		);
+		$CI->db->insert('rating_log', $param);
+        if ($CI->db->affected_rows() > 0){
+        	$CI->db->cache_delete_all();
+        }
+		if((int) $article_rating == 1){
+                     $article_uri = $data['article_uri'];
+                     //$CI->load->library('session');
+		     //	$CI->session->set_flashdata('rating', TRUE);
+			redirect('article/'.$article_uri.'/rating'); 
+			//$CI->core_events->trigger('thankyou');
+			//return "Done";
+			//$CI->load->helper('url');
+		}else{
+			$useragent = $CI->input->user_agent();
+			if($this->is_mobile($useragent)){
+				redirect(''); 
+			}else{
+				redirect(''); 
+			}
+		}
+	}
+	
+	function is_mobile($useragent)
+	{
+        if ($this -> isDoCoMo($useragent)) {
+            return true;
+        } elseif ($this -> isEZweb($useragent)) {
+            return true;
+        } elseif ($this ->isSoftBank($useragent)) {
+            return true;
+        } elseif ($this ->isWillcom($useragent)) {
+            return true;
+        }
+	        return false;
+    }
+
+     function is_shiftjis($useragent)
+	{
+        if ($this -> isDoCoMo($useragent)) {
+            return true;
+        } elseif ($this -> isEZweb($useragent)) {
+            return false;
+        } elseif ($this ->isSoftBank($useragent)) {
+            return true;
+        } elseif ($this ->isWillcom($useragent)) {
+            return true;
+        }
+	 return true;
+    }
+
+    function isDoCoMo($useragent = null)
+    {
+        if (is_null($useragent)) {
+	        $CI =& get_instance();
+			$$useragent = $CI->input->user_agent();
+        }
+
+        if (preg_match('!^DoCoMo!', $useragent)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function isEZweb($useragent = null)
+    {
+        if (is_null($useragent)) {
+	        $CI =& get_instance();
+			$$useragent = $CI->input->user_agent();
+        }
+
+        if (preg_match('!^KDDI-!', $useragent)) {
+            return true;
+        } elseif (preg_match('!^UP\.Browser!', $useragent)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function isSoftBank($useragent = null)
+    {
+        if (is_null($useragent)) {
+	        $CI =& get_instance();
+			$useragent = $CI->input->user_agent();
+        }
+
+        if (preg_match('!^SoftBank!', $useragent)) {
+            return true;
+        } elseif (preg_match('!^Semulator!', $useragent)) {
+            return true;
+        } elseif (preg_match('!^Vodafone!', $useragent)) {
+            return true;
+        } elseif (preg_match('!^Vemulator!', $useragent)) {
+            return true;
+        } elseif (preg_match('!^MOT-!', $useragent)) {
+            return true;
+        } elseif (preg_match('!^MOTEMULATOR!', $useragent)) {
+            return true;
+        } elseif (preg_match('!^J-PHONE!', $useragent)) {
+            return true;
+        } elseif (preg_match('!^J-EMULATOR!', $useragent)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function isWillcom($useragent = null)
+    {
+        if (is_null($useragent)) {
+	        $CI =& get_instance();
+			$useragent = $CI->input->user_agent();
+        }
+
+        if (preg_match('!^Mozilla/3\.0\((?:DDIPOCKET|WILLCOM);!', $useragent)) {
+            return true;
+        }
+
+        return false;
+    }
 }
 
 /* End of file events.php */

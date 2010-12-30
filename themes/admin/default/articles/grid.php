@@ -162,9 +162,18 @@
 					}
 					?>
 				</td>
-				<?php echo $this->core_events->trigger('show_siteinfo_on_articles', $item['article_id']); ?>
+				<?php $site = $this->core_events->trigger('show_siteinfo_on_articles', $item['article_id']); ?>
+				<?php if($site !== NULL){ 
+				echo '<td>'.$site.'</td>';
+				} ?>
 				<td width="10%" nowrap="nowrap">
-					<a href="<?php echo site_url('article/'.$item['article_uri']); ?>" target="_blank"><img src="<?php echo base_url(); ?>images/page_show.png" border="0" alt="<?php echo lang('kb_show'); ?>" title="<?php echo lang('kb_show'); ?>" /></a>
+					<a href="
+					<?php if($site !== NULL){ 
+					echo site_url('article/preview/'.$item['article_uri'].'/'.$site);
+					}else{
+					echo site_url('article/'.$item['article_uri']);
+					} ?>
+					" target="_blank"><img src="<?php echo base_url(); ?>images/page_show.png" border="0" alt="<?php echo lang('kb_show'); ?>" title="<?php echo lang('kb_show'); ?>" /></a>
 					&nbsp;
 					<a href="<?php echo site_url('admin/articles/edit/'.$item['article_id']); ?>"><img src="<?php echo base_url(); ?>images/page_edit.png" border="0" alt="<?php echo lang('kb_edit'); ?>" title="<?php echo lang('kb_edit'); ?>" /></a>
 					&nbsp;

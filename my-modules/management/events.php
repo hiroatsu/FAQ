@@ -241,23 +241,23 @@ class management_events
         $CI =& get_instance();
         $id = (int) $article_id;
 		$articles2site = $this->get_articles2site_by_id($id);
-		echo "<td>";
+		//echo "<td>";
         if ($articles2site !== NULL){
         	foreach ($articles2site->result() as $row){
 				if( $row->site_id == null || ($row->site_id !== null && (int)$row->site_id == 0)){
-					echo "N/A";
+					return "N/A";
 				}
 		    	$shortname = $this->get_shortname_on_siteinfo_by_id($row->site_id);
 		    	if($shortname !== NULL){
-					echo $shortname;
+					return $shortname;
 				}else{
-	               	echo "N/A";
+	               	return "N/A";
 				}
         	}
         }else{
-               	echo "N/A";
+               	return "N/A";
         }
-		echo "</td>";
+		//echo "</td>";
 	}
 
 	function add_article_siteinfo($id){

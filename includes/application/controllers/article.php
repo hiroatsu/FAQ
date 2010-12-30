@@ -43,6 +43,26 @@ class Article extends Controller
 	// ------------------------------------------------------------------------
 	
 	/**
+	* Preview Controller
+	*
+	* Show a single article
+	*
+	* @access	public
+	* @param	string	the unique uri
+	* @return	array
+	*/
+	function preview($uri='')
+	{
+		$this->load->helper('typography');
+		$this->load->helper('form');
+		$this->load->helper('cookie');
+		$this->load->helper('gravatar');
+		if(strcmp($this->core_events->trigger('viewpreviewarticle', $uri),"") == 0){
+		echo 'Preview function is not active please check module';
+		}
+	}
+
+	/**
 	* Index Controller
 	*
 	* Show a single article
@@ -110,6 +130,7 @@ class Article extends Controller
 		$this->init_model->display_template('article', $data);
 		}
 	}
+
 	
 	// ------------------------------------------------------------------------
 	
@@ -248,6 +269,10 @@ class Article extends Controller
 		elseif($method == 'rate')
 		{
 			$this->rate();
+		}
+		elseif($method == 'preview')
+		{
+			$this->preview($method);
 		}
 		else
 		{
