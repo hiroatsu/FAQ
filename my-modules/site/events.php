@@ -551,16 +551,19 @@ class site_events
 		$is_shiftjis = FALSE;
 		if ($CI->init_model->test_exists($body_file))
 		{			
-        	if($is_shiftjis){
-            	return $this->convertUtfToShiftjis($CI->load->view($body_file, $data, true));
+        		if($is_shiftjis && $this->is_mobile($useragent)){
+				$HankakuKana = $this->convertZenkakuKanaToHankakuKana($CI->load->view($body_file, $data, true));
+            			return $this->convertUtfToShiftjis($HankakuKana);
+			}elseif($is_shiftjis){
+            		return $this->convertUtfToShiftjis($CI->load->view($body_file, $data, true));
 			}else{
 				return $CI->load->view($body_file, $data, true);
 			}
 		}
 		else
 		{
-        	if ($is_shiftjis){
-            	return $this->convertUtfToShiftjis($CI->load->view($dir.'/default/'.$template, $data, true));
+        		if ($is_shiftjis){
+	            	return $this->convertUtfToShiftjis($CI->load->view($dir.'/default/'.$template, $data, true));
 			}else{
 				return $CI->load->view($dir.'/default/'.$template, $data, true);
 			}
@@ -584,8 +587,11 @@ class site_events
 		$is_shitjis = FALSE;
 		if ($CI->init_model->test_exists($body_file))
 		{			
-        	if($is_shiftjis){
-            	return $this->convertUtfToShiftjis($CI->load->view($body_file, $data, true));
+		        	if(($is_shiftjis) && ($this->is_mobile($useragent))){
+				$HankakuKana = $this->convertZenkakuKanaToHankakuKana($CI->load->view($body_file, $data, true));
+       			     	return $this->convertUtfToShiftjis($HankakuKana);
+			}elseif($is_shiftjis){
+       	     		return $this->convertUtfToShiftjis($CI->load->view($body_file, $data, true));
 			}else{
 				return $CI->load->view($body_file, $data, true);
 			}
@@ -593,7 +599,7 @@ class site_events
 		else
 		{
         	if ($is_shiftjis){
-            	return $this->convertUtfToShiftjis($CI->load->view($dir.'/default/'.$template, $data, true));
+            		return $this->convertUtfToShiftjis($CI->load->view($dir.'/default/'.$template, $data, true));
 			}else{
 				return $CI->load->view($dir.'/default/'.$template, $data, true);
 			}
@@ -616,7 +622,17 @@ class site_events
 		$layout_file=$this -> get_layout_template_with_site_id($data, $useragent, $is_shiftjis);
 		if ($CI->init_model->test_exists($layout_file))
 		{
-        	if ($is_shiftjis){
+        		if ($is_shiftjis && $this->is_mobile($useragent)){
+				//set charset SHIFT-JIS
+				$data = $this->setlayoutsetting($data,$is_shiftjis);
+				//set header info
+				$data['header'] = $this->get_template_data_with_site_id('header', $data, $useragent, $is_shiftjis);	
+				//$data['topsearch'] = $this->get_template_data_with_site_id('topsearch', $data, $useragent, $is_shiftjis);	
+				$data['footer'] = $this->get_template_data_with_site_id('footer', $data, $useragent, $is_shiftjis);	
+				//return $this->convertUtfToShiftjis($CI->load->view($layout_file, $data));
+				$HankakuKana = $this->convertZenkakuKanaToHankakuKana($CI->load->view($layout_file, $data,true));
+				echo $this->convertUtfToShiftjis($HankakuKana);			
+			}elseif ($is_shiftjis){
 				//set charset SHIFT-JIS
 				$data = $this->setlayoutsetting($data,$is_shiftjis);
 				//set header info
@@ -637,7 +653,7 @@ class site_events
 		}
 		else
 		{
-        	if ($is_shiftjis){
+        		if ($is_shiftjis){
 				//set charset SHIFT-JIS
 				$data = $this->setlayoutsetting($data,$is_shiftjis);
 				$data['header'] = $this->get_template_data_with_site_id('header', $data, $useragent, $is_shiftjis);	
@@ -830,8 +846,11 @@ class site_events
 		$query = $CI->db->get();
 		$data['query'] = $query;
 		$data = $this->set_siteinfo_with_site_id($useragent,$data);
-        if ($is_shiftjis){
-            return $this->convertUtfToShiftjis($CI->load->view('front/'.$data['template_location'].'/secondcategory.php', $data));
+        	if ($is_shiftjis && $this->is_mobile($useragent)){
+		         $HankakuKana = $this->convertZenkakuKanaToHankakuKana($CI->load->view('front/'.$data['template_location'].'/secondcategory.php', $data));
+            	        return $this->convertUtfToShiftjis($HankakuKana);
+		}elseif($is_shiftjis){
+            		return $this->convertUtfToShiftjis($CI->load->view('front/'.$data['template_location'].'/secondcategory.php', $data));
 		}else{
 			return $CI->load->view('front/'.$data['template_location'].'/secondcategory.php', $data);
 		}
@@ -860,8 +879,11 @@ class site_events
 		$query = $CI->db->get();
 		$data['query'] = $query;
 		$data = $this->set_siteinfo_with_site_id($useragent,$data);
-        if ($is_shiftjis){
-            return $this->convertUtfToShiftjis($CI->load->view('front/'.$data['template_location'].'/thirdcategory.php', $data));
+	       if ($is_shiftjis && $this->is_mobile($useragent)){
+		         $HankakuKana = $this->convertZenkakuKanaToHankakuKana($CI->load->view('front/'.$data['template_location'].'/thirdcategory.php', $data));
+            	        return $this->convertUtfToShiftjis($HankakuKana);
+		}elseif($is_shiftjis){
+            		return $this->convertUtfToShiftjis($CI->load->view('front/'.$data['template_location'].'/thirdcategory.php', $data));
 		}else{
 			return $CI->load->view('front/'.$data['template_location'].'/thirdcategory.php', $data);
 		}
@@ -911,6 +933,11 @@ class site_events
     /**
      * Checks whether or not the user agent is Willcom by a given user agent string.
      */
+    function convertZenkakuKanaToHankakuKana($data)
+    {
+		return mb_convert_kana($data,'k',"UTF-8");
+    }
+
     function convertUtfToShiftjis($data)
     {
 		return mb_convert_encoding($data, "SJIS-win", "UTF-8");
