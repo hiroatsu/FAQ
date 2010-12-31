@@ -745,9 +745,15 @@ class site_events
 		$useragent = $CI->input->user_agent();
 		if($this->is_mobile($useragent) == false)
 		{
-		   $CI->db->where('site_id', 1);
+		   //$CI->db->where('site_id', 1);
+		   //$CI->db->orwhere('site_id', 0);
+		   $where = "(site_id in (0,1))";
+		   $CI->db->where($where);
 		}else {
-		   $CI->db->where('site_id', 2);
+		   //$CI->db->where('site_id', 2);
+		   //$CI->db->orwhere('site_id', 0);
+		   $where = "(site_id in (0,2))";
+		   $CI->db->where($where);
 		}
 		$CI->db->where('article_id', $id);
 		$CI->db->where('cat_display', 'Y');
@@ -839,9 +845,13 @@ class site_events
 		$useragent = $CI->input->user_agent();
 		if($this->is_mobile($useragent) == false)
 		{
-		   $CI->db->where('site_id', 1);
+		   //$CI->db->where('site_id', 1);
+		   $where = "(site_id in (0,1))";
+		   $CI->db->where($where);
 		}else {
-		   $CI->db->where('site_id', 2);
+		   //$CI->db->where('site_id', 2);
+		   $where = "(site_id in (0,2))";
+		   $CI->db->where($where);
 		}
 		$query = $CI->db->get();
 		$data['query'] = $query;
@@ -872,9 +882,11 @@ class site_events
 		$useragent = $CI->input->user_agent();
 		if($this->is_mobile($useragent) == false)
 		{
-		   $CI->db->where('site_id', 1);
+		   $where = "(site_id in (0,1))";
+		   $CI->db->where($where);
 		}else {
-		   $CI->db->where('site_id', 2);
+		   $where = "(site_id in (0,2))";
+		   $CI->db->where($where);
 		}
 		$query = $CI->db->get();
 		$data['query'] = $query;
@@ -959,9 +971,15 @@ class site_events
 		$useragent = $CI->input->user_agent();
 		if($this->is_mobile($useragent) == false)
 		{
-		   $CI->db->where('site_id', 1);
+		   //$CI->db->where('site_id', 1);
+		   //$CI->db->orwhere('site_id', 0);
+		   $where = "(site_id in (0,1))";
+		   $CI->db->where($where);
 		}else {
-		   $CI->db->where('site_id', 2);
+		   //$CI->db->where('site_id', 2);
+		   //$CI->db->orwhere('site_id', 0);
+		   $where = "(site_id in (0,2))";
+		   $CI->db->where($where);
 		}
 		$query = $CI->db->get();
 		$data['categories']= $query;
@@ -991,9 +1009,15 @@ class site_events
 		$useragent = $CI->input->user_agent();
 		if($this->is_mobile($useragent) == false)
 		{
-		   $CI->db->where('site_id', 1);
+		   //$CI->db->where('site_id', 1);
+		   //$CI->db->orwhere('site_id', 0);
+		   $where = "(site_id in (0,1))";
+		   $CI->db->where($where);
 		}else {
-		   $CI->db->where('site_id', 2);
+		   //$CI->db->where('site_id', 2);
+		   //$CI->db->orwhere('site_id', 0);
+		   $where = "(site_id in (0,2))";
+		   $CI->db->where($where);
 		}
 		$query = $CI->db->get();
 		if($query !== null){
@@ -1057,9 +1081,15 @@ class site_events
 
 		if($this->is_mobile($useragent) == false)
 		{
-		   $CI->db->where('site_id', 1);
+		   //$CI->db->where('site_id', 1);
+		   //$CI->db->orwhere('site_id', 0);
+		   $where = "(site_id in (0,1))";
+		   $CI->db->where($where);
 		}else {
-		   $CI->db->where('site_id', 2);
+		   //$CI->db->where('site_id', 2);
+		   //$CI->db->orwhere('site_id', 0);
+		   $where = "(site_id in (0,2))";
+		   $CI->db->where($where);
 		}
 
 		$query = $CI->db->get();
@@ -1076,9 +1106,15 @@ class site_events
 		}
 		if($this->is_mobile($useragent) == false)
 		{
-		   $CI->db->where('site_id', 1);
+		   //$CI->db->where('site_id', 1);
+		   //$CI->db->orwhere('site_id', 0);
+		   $where = "(site_id in (0,1))";
+		   $CI->db->where($where);
 		}else {
-		   $CI->db->where('site_id', 2);
+		   //$CI->db->where('site_id', 2);
+		   //$CI->db->orwhere('site_id', 0);
+		   $where = "(site_id in (0,2))";
+		   $CI->db->where($where);
 		}
 		$CI->db->where('cat_uri', $uri)->where('cat_display', 'Y');
 		$query = $CI->db->get();
@@ -1113,9 +1149,15 @@ class site_events
 		}
 		if($this->is_mobile($useragent) == false)
 		{
-		   $CI->db->where('site_id', 1);
+		   //$CI->db->where('site_id', 1);
+		   //$CI->db->orwhere('site_id', 0);
+		   $where = "(site_id in (0,1))";
+		   $CI->db->where($where);
 		}else {
-		   $CI->db->where('site_id', 2);
+		   //$CI->db->where('site_id', 2);
+		   //$CI->db->orwhere('site_id', 0);
+		   $where = "(site_id in (0,2))";
+		   $CI->db->where($where);
 		}
 		if ($show_count)
 		{
@@ -1368,9 +1410,13 @@ class site_events
 		$useragent = $CI->input->user_agent();
 		if($this->is_mobile($useragent) == false)
 		{
-		   $CI->db->where('site_id', 1);
+		   //$CI->db->where('site_id', 1);
+		   $where = "(site_id in (0,1))";
+		   $CI->db->where($where);
 		}else {
-		   $CI->db->where('site_id', 2);
+		   //$CI->db->where('site_id', 2);
+		   $where = "(site_id in (0,2))";
+		   $CI->db->where($where);
 		}
 		$CI->db->where('cat_parent', $parent);
 		
@@ -1428,9 +1474,11 @@ class site_events
 		$useragent = $CI->input->user_agent();
 		if($this->is_mobile($useragent) == false)
 		{
-		   $CI->db->where('site_id', 1);
+		   $where = "(site_id in (0,1))";
+		   $CI->db->where($where);
 		}else {
-		   $CI->db->where('site_id', 2);
+		   $where = "(site_id in (0,2))";
+		   $CI->db->where($where);
 		}
 		$CI->db->where('article_display', 'Y')->orderby('article_hits', 'DESC')->limit($number);
 		$query = $CI->db->get();
@@ -1482,9 +1530,11 @@ class site_events
 		$useragent = $CI->input->user_agent();
 		if($this->is_mobile($useragent) == false)
 		{
-		   $CI->db->where('site_id', 1);
+		   $where = "(site_id in (0,1))";
+		   $CI->db->where($where);
 		}else {
-		   $CI->db->where('site_id', 2);
+		   $where = "(site_id in (0,2))";
+		   $CI->db->where($where);
 		}
 		$CI->db->where('arttag_id', $id);
 		$CI->db->where('article_display', 'Y');
@@ -1537,9 +1587,11 @@ class site_events
 		$CI->db->join('articles2site', 'articles.article_id = articles2site.article_id', 'left');
 		if($this->is_mobile($useragent) == false)
 		{
-		   $CI->db->where('site_id', 1);
+		   $where = "(site_id in (0,1))";
+		   $CI->db->where($where);
 		}else {
-		   $CI->db->where('site_id', 2);
+		   $where = "(site_id in (0,2))";
+		   $CI->db->where($where);
 		}
 		if($active===TRUE){
 		$CI->db->where('article_uri', $uri)->where('article_display', 'Y');

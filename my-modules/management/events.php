@@ -190,6 +190,7 @@ class management_events
 		    	    if ($site_infos !== NULL){
 		        		foreach ($site_infos->result() as $site_info){
         	   				if( (int)$site_info->site_id == 0){
+		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
           					}
         	   				if( (int)$site_info->site_id == 1){
 		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
@@ -199,6 +200,7 @@ class management_events
 							}
         				}
 					}else{
+               		echo '<option value="0">ALL</option>';
                		echo '<option value="1" selected>PC</option>';
                		echo '<option value="2">Mobile</option>';
 					}
@@ -209,6 +211,7 @@ class management_events
 		    	    if ($site_infos !== NULL){
 		        		foreach ($site_infos->result() as $site_info){
         	   				if( (int)$site_info->site_id == 0){
+		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
           					}
         	   				if( (int)$site_info->site_id == 2){
 		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
@@ -218,17 +221,19 @@ class management_events
 							}
         				}
 					}else{
+               		echo '<option value="0">ALL</option>';
                		echo '<option value="1">PC</option>';
                		echo '<option value="2" selected>Mobile</option>';
 					}
           		}
           		if( (int) $row->site_id !== 2 && (int)$row->site_id !== 1 ){
-          		echo $row->site_id;
+               	echo '<option value="0">ALL</option>';
 			    echo '<option value="2" >Mobile</option>';
           		echo '<option value="1" >PC</option>';
          		}
         	}
         }else{
+          echo '<option value="0">ALL</option>';
           echo '<option value="1" >PC</option>';
           echo '<option value="2" >Mobile</option>';
         }
@@ -244,14 +249,15 @@ class management_events
 		//echo "<td>";
         if ($articles2site !== NULL){
         	foreach ($articles2site->result() as $row){
-				if( $row->site_id == null || ($row->site_id !== null && (int)$row->site_id == 0)){
+				if( $row->site_id == null){
 					return "N/A";
 				}
 		    	$shortname = $this->get_shortname_on_siteinfo_by_id($row->site_id);
 		    	if($shortname !== NULL){
 					return $shortname;
 				}else{
-	               	return "N/A";
+	               	//return "N/A";
+					return $shortname;
 				}
         	}
         }else{
@@ -310,8 +316,9 @@ class management_events
 		echo "<td>";
         if ($categories2site !== NULL){
         	foreach ($categories2site->result() as $row){
-				if( $row->site_id == null || ($row->site_id !== null && (int)$row->site_id == 0)){
+				if( $row->site_id == null){
 					echo "N/A";
+					//echo $shortname;
 				}
 		    	$shortname=$this->get_shortname_on_siteinfo_by_id($row->site_id);
 				if ($shortname !== null){
@@ -339,6 +346,7 @@ class management_events
            			if ($site_infos !== null){
 		        		foreach ($site_infos->result() as $site_info){
         	   				if( (int)$site_info->site_id == 0){
+		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
           					}
         	   				if( (int)$site_info->site_id == 1){
 		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
@@ -348,6 +356,7 @@ class management_events
 							}
         				}
 					}else{
+               		echo '<option value="0">ALL</option>';
                		echo '<option value="1" selected>PC</option>';
                		echo '<option value="2">Mobile</option>';
 					}
@@ -357,6 +366,7 @@ class management_events
            			if ($site_infos !== null){
 		        		foreach ($site_infos->result() as $site_info){
         	   				if( (int)$site_info->site_id == 0){
+		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
           					}
         	   				if( (int)$site_info->site_id == 2){
 		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
@@ -366,17 +376,20 @@ class management_events
 							}
         				}
 					}else{
+               		echo '<option value="0">ALL</option>';
                		echo '<option value="1">PC</option>';
                		echo '<option value="2" selected>Mobile</option>';
 					}
           		}
           		if( (int) $row->site_id !== 2 && (int)$row->site_id !== 1 ){
+               	echo '<option value="0">ALL</option>';
           		echo '<option value="2" >Mobile</option>';
           		echo '<option value="1" >PC</option>';
          		}
         	}
         }else{
-          echo '<option value="1" >PC</option>';
+		  echo '<option value="0">ALL</option>';
+		  echo '<option value="1" >PC</option>';
           echo '<option value="2" >Mobile</option>';
         }
         echo  '</select>';
