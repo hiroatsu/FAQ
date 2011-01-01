@@ -188,17 +188,7 @@ class management_events
            		if((int)$row->site_id == 1){
 			    	$site_infos=$this->get_all_ids_and_shortnames_on_siteinfo();
 		    	    if ($site_infos !== NULL){
-		        		foreach ($site_infos->result() as $site_info){
-        	   				if( (int)$site_info->site_id == 0){
-		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
-          					}
-        	   				if( (int)$site_info->site_id == 1){
-		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
-							}
-							if((int)$site_info->site_id !== 0 && (int)$site_info->site_id !== 1 ){
-		               		echo '<option value="'.$site_info->site_id.'" >'.$site_info->shortname.'</option>';
-							}
-        				}
+						$this->show_siteinfo_selection($site_infos);
 					}else{
                		echo '<option value="0">ALL</option>';
                		echo '<option value="1" selected>PC</option>';
@@ -206,20 +196,9 @@ class management_events
 					}
           		}
           		if( (int)$row->site_id == 2){
-			    echo $row->site_id;
 			    	$site_infos=$this->get_all_ids_and_shortnames_on_siteinfo();
 		    	    if ($site_infos !== NULL){
-		        		foreach ($site_infos->result() as $site_info){
-        	   				if( (int)$site_info->site_id == 0){
-		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
-          					}
-        	   				if( (int)$site_info->site_id == 2){
-		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
-							}
-							if((int)$site_info->site_id !== 0 && (int)$site_info->site_id !== 2 ){
-		               		echo '<option value="'.$site_info->site_id.'" >'.$site_info->shortname.'</option>';
-							}
-        				}
+						$this->show_siteinfo_selection($site_infos);
 					}else{
                		echo '<option value="0">ALL</option>';
                		echo '<option value="1">PC</option>';
@@ -239,6 +218,22 @@ class management_events
         }
         echo  '</select>';
         echo '</p>';
+	}
+
+	function show_siteinfo_selection($site_infos){
+
+		foreach ($site_infos->result() as $site_info){
+       		if( (int)$site_info->site_id == 0){
+			echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
+        	}
+       		if( (int)$site_info->site_id == 2){
+		    echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
+			}
+			if((int)$site_info->site_id !== 0 && (int)$site_info->site_id !== 2 ){
+		     echo '<option value="'.$site_info->site_id.'" >'.$site_info->shortname.'</option>';
+			}
+        }
+
 	}
 
 	function show_siteinfo_on_articles($article_id)
@@ -344,17 +339,7 @@ class management_events
 		    	if((int)$row->site_id == 1){
 					$site_infos=$this->get_all_ids_and_shortnames_on_siteinfo();
            			if ($site_infos !== null){
-		        		foreach ($site_infos->result() as $site_info){
-        	   				if( (int)$site_info->site_id == 0){
-		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
-          					}
-        	   				if( (int)$site_info->site_id == 1){
-		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
-							}
-							if((int)$site_info->site_id !== 0 && (int)$site_info->site_id !== 1 ){
-		               		echo '<option value="'.$site_info->site_id.'" >'.$site_info->shortname.'</option>';
-							}
-        				}
+						$this->show_siteinfo_selection($site_infos);
 					}else{
                		echo '<option value="0">ALL</option>';
                		echo '<option value="1" selected>PC</option>';
@@ -364,17 +349,7 @@ class management_events
           		if( (int)$row->site_id == 2){
 		    	    $site_infos=$this->get_all_ids_and_shortnames_on_siteinfo();
            			if ($site_infos !== null){
-		        		foreach ($site_infos->result() as $site_info){
-        	   				if( (int)$site_info->site_id == 0){
-		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
-          					}
-        	   				if( (int)$site_info->site_id == 2){
-		               		echo '<option value="'.$site_info->site_id.'" selected>'.$site_info->shortname.'</option>';
-							}
-							if((int)$site_info->site_id !== 0 && (int)$site_info->site_id !== 2 ){
-		               		echo '<option value="'.$site_info->site_id.'" >'.$site_info->shortname.'</option>';
-							}
-        				}
+						$this->show_siteinfo_selection($site_infos);
 					}else{
                		echo '<option value="0">ALL</option>';
                		echo '<option value="1">PC</option>';
