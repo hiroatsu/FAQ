@@ -309,7 +309,7 @@ class Articles extends Controller
 		$continue = true;
 		
 		$this->form_validation->set_rules('article_title', 'lang:kb_title', 'required');
-		$this->form_validation->set_rules('article_uri', 'lang:kb_uri', 'alpha_dash');
+		$this->form_validation->set_rules('article_uri', 'lang:kb_uri', 'required|alpha_dash');
 		$this->form_validation->set_rules('article_keywords', 'lang:kb_keywords', 'trim|xss_clean');
 		$this->form_validation->set_rules('article_short_desc', 'lang:kb_short_description', 'trim|xss_clean');
 		$this->form_validation->set_rules('article_description', 'lang:kb_description', 'required|trim|xss_clean');
@@ -411,10 +411,10 @@ class Articles extends Controller
 		$data['action'] = 'add';
 		
 		$this->form_validation->set_rules('article_title', 'lang:kb_title', 'required');
-		$this->form_validation->set_rules('article_uri', 'lang:kb_uri', 'alpha_dash');
+		$this->form_validation->set_rules('article_uri', 'lang:kb_uri', 'required|alpha_dash');
 		$this->form_validation->set_rules('article_keywords', 'lang:kb_keywords', 'trim|xss_clean');
 		$this->form_validation->set_rules('article_short_desc', 'lang:kb_short_description', 'trim|xss_clean');
-		$this->form_validation->set_rules('article_description', 'lang:kb_description', 'trim|xss_clean');
+		$this->form_validation->set_rules('article_description', 'lang:kb_description', 'required|trim|xss_clean');
 		$this->form_validation->set_rules('article_display', 'lang:kb_display', 'trim');
 		$this->form_validation->set_rules('article_order', 'lang:kb_weight', 'numeric');
 		$this->core_events->trigger('articles/validation');
