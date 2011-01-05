@@ -170,17 +170,17 @@ $CI->db->select('articles.article_id,category_id,article_title,site_id')->from('
 	echo '<p>'.$commment.'</p>';
 	echo '<table width="100%" cellspacing="0">'."\n";
 	echo '<tr align="center">'."\n";
-	echo '<th>article_id</th>';
-	echo '<th>article_title</th>';
-	echo '<th>category_id</th>';
-	echo '<th>category</th>';
-	echo '<th>PV</th>';
-	echo '<th>YES</th>';
-	echo '<th>NO</th>';
-	echo '<th>Answer/PV</th>';
-	echo '<th>YES/Answer</th>';
-	echo '<th>NO/Answer</th>';
-	echo '<th>Siteinfo</th>';
+	echo '<th width="3%">A_ID</th>';
+	echo '<th width="30%">article_title</th>';
+	echo '<th width="3%">C_ID</th>';
+	echo '<th width="27%">category</th>';
+	echo '<th width="3%">PV</th>';
+	echo '<th width="3%"> YES</th>';
+	echo '<th width="3%">NO</th>';
+	echo '<th width="7%">Total/PV</th>';
+	echo '<th width="7%">YES/Total</th>';
+	echo '<th width="7%">NO/Total</th>';
+	echo '<th width="7%">Site</th>';
 	//echo '<th>referrer</th>';
 	echo '</tr>'."\n";
 
@@ -193,9 +193,9 @@ $CI->db->select('articles.article_id,category_id,article_title,site_id')->from('
 			'end_datetime' =>$end_datetime
 		);
 		
-		echo '<tr>'."\n";
+		echo '<tr align="center">'."\n";
 		echo '<td>'.$row->article_id.'</td>'."\n";
-		echo '<td>'.$row->article_title.'</td>'."\n";
+		echo '<td align="left">'.$row->article_title.'</td>'."\n";
 		echo '<td>'.$row->category_id.'</td>'."\n";;
 	    echo $CI->core_events->trigger('get_category_name_by_category_id',$row->category_id);
 		echo '<td>'."\n";
@@ -235,7 +235,9 @@ $CI->db->select('articles.article_id,category_id,article_title,site_id')->from('
 		echo $f_percentage.'%';
 		}
 		echo '</td>'."\n";
+		echo '<td>'."\n";
 		echo $CI->core_events->trigger('show_siteinfo_on_articles',$row->article_id);
+		echo '</td>'."\n";
 		echo '</tr>'."\n";
 		}
 	}
