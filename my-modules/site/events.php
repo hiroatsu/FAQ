@@ -69,6 +69,7 @@ class site_events
 	    $CI =& get_instance();
 		$useragent = $CI->input->user_agent();
 		$is_shiftjis = $this->is_shiftjis($useragent);
+
 		//[parents] 
 		$data = $this->set_top_category_info();
 		//[categories],[childcategories] 
@@ -77,7 +78,9 @@ class site_events
 		//For Top page search[cat_tree]		
 		$data = $this->set_category_tree_info($data);		
 		//For most popular article[pop]
-		$data = $this->set_most_popular_article_info($data,10);		
+		$data = $this->set_most_popular_article_info($data,5);		
+		//For most recent article[recent]
+		$data = $this->set_most_recent_article_info($data,5);		
 
 		$template = 'home';
 		$dir='front';
@@ -439,11 +442,11 @@ class site_events
 			$CI->db->join('articles2site', 'articles.article_id = articles2site.article_id', 'left');
 			if($this->is_mobile($useragent) == false)
 			{
-		   	$CI->db->where('site_id', 1);
-			$CI->db->orwhere('site_id', 0);
+		   $where = "(site_id in (0,1))";
+		   $CI->db->where($where);
 			}else {
-		   	$CI->db->where('site_id', 2);
-			$CI->db->orwhere('site_id', 0);
+		   $where = "(site_id in (0,2))";
+		   $CI->db->where($where);
 			}
 			if($category)
 			{
@@ -1238,6 +1241,26 @@ class site_events
 		return $query;
 	}
 
+	function get_most_recent_with_site_id($number=25){
+
+		$CI =& get_instance();
+		$number = (int)$number;
+		$CI->db->select('article_uri,article_title')->from('articles');
+		$CI->db->join('articles2site', 'articles.article_id = articles2site.article_id', 'left');
+		$useragent = $CI->input->user_agent();
+		if($this->is_mobile($useragent) == false)
+		{
+		   $where = "(site_id in (0,1))";
+		   $CI->db->where($where);
+		}else {
+		   $where = "(site_id in (0,2))";
+		   $CI->db->where($where);
+		}
+		$CI->db->where('article_display', 'Y')->orderby('article_date', 'DESC')->limit($number);
+		$query = $CI->db->get();
+		return $query;
+	}
+
 	/**
 	 * Get Article By arttag ID.
 	 *
@@ -1486,6 +1509,12 @@ class site_events
 	function set_most_popular_article_info($data,$num){
 
 		$data['pop'] = $this->get_most_popular_with_site_id($num);
+		return $data;		
+	}
+
+	function set_most_recent_article_info($data,$num){
+
+		$data['recent'] = $this->get_most_recent_with_site_id($num);
 		return $data;		
 	}
 
