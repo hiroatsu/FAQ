@@ -37,8 +37,8 @@ $CI =& get_instance();
          <?php
 		 $today = getdate();
 		 $year= (int)$today['year']; 
-		 	for( $year - 5;$year<=(int)$today['year'];$year++){
-			if((int)$year == (int) $today['$year']){
+		 	for( $year = ($year - 5);$year<=(int)$today['year'];$year++){
+			if((int)$year == (int) $today['year']){
 			echo '<option value="'.$year.'"  selected="selected" >'.$year.'</opion>';
 			}else{
 			echo '<option value="'.$year.'" >'.$year.'</opion>';
@@ -78,8 +78,8 @@ $CI =& get_instance();
          <?php
 		 $today = getdate();
 		 $year= (int)$today['year']; 
-		 	for( $year - 5;$year<=(int)$today['year'];$year++){
-			if((int)$year == (int) $today['$year']){
+		 	for( $year = ($year - 5);$year<=(int)$today['year'];$year++){
+			if((int)$year == (int) $today['year']){
 			echo '<option value="'.$year.'"  selected="selected" >'.$year.'</opion>';
 			}else{
 			echo '<option value="'.$year.'" >'.$year.'</opion>';
@@ -237,8 +237,8 @@ $CI->db->select('articles.article_id,category_id,article_title,site_id')->from('
 		echo '</td>'."\n";
 		echo '<td>'."\n";
 		echo $CI->core_events->trigger('show_siteinfo_on_articles',$row->article_id);
-		echo '</td>'."\n";
 		echo '</tr>'."\n";
+		echo '</td>'."\n";
 		}
 	}
 	echo '</table>'."\n";
