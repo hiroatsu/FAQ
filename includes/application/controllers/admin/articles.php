@@ -292,6 +292,9 @@ class Articles extends Controller
 		$data['attach'] = $this->article_model->get_attachments($id);
 		$data['action'] = 'modify';
 		
+		$attachment_path = base_url().'uploads/'.$id.'/';
+		$data['attachment_path'] = str_replace("http://".$_SERVER['HTTP_HOST'],'',$attachment_path);
+		
 		$level = $this->auth->check_level(4);
 		if ( ! $level)
 		{

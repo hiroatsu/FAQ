@@ -224,7 +224,7 @@
                             this.editorDoc.execCommand('createLink', true, null);
                         else
                         {
-                            var szURL = prompt('URL', 'http://');
+                            var szURL = prompt('url', 'http://');
 
                             if ( szURL && szURL.length > 0 )
                             {
@@ -248,7 +248,7 @@
                         this.editorDoc.execCommand('insertImage', true, null);
                     else
                     {
-                        var szURL = prompt('URL', 'http://');
+                        var szURL = prompt('FilePath', '');
 
                         if ( szURL && szURL.length > 0 )
                             this.editorDoc.execCommand('insertImage', false, szURL);

@@ -40,6 +40,12 @@
 			<label for="article_description"><?php echo lang('kb_content'); ?>: <em>(<?php echo lang('kb_required'); ?>)</em></label>
 			<textarea tabindex="5" name="article_description" id="editcontent" cols="35" rows="15" class="inputtext"><?php echo (isset($art->article_description)) ? set_value('article_description', $art->article_description) : set_value('article_description'); ?></textarea>
 		</p>
+		<p class="row1">
+			<label for="userfile"><?php echo lang('kb_attachment'); ?>:</label>
+			<input tabindex="9" type="file" id="userfile" name="userfile" size="20" />
+			<input type="submit" tabindex="11" name="save" class="save" value="<?php echo lang('kb_upload_and_continue'); ?>" />
+		</p>
+
 		<?php $this->core_events->trigger('articles/form/description', (isset($art->article_id)) ? $art->article_id : ''); ?>
 		
 		
@@ -67,12 +73,7 @@
 				<option value="Y"<?php if(isset($art->article_display) && $art->article_display == 'Y') echo ' selected'; ?>><?php echo lang('kb_yes'); ?></option>
 				<option value="N"<?php if(isset($art->article_display) && $art->article_display == 'N') echo ' selected'; ?>><?php echo lang('kb_no'); ?></option>
 			</select>
-		</p>
-		
-		<p class="row1">
-			<label for="userfile"><?php echo lang('kb_attachment'); ?>:</label>
-			<input tabindex="9" type="file" id="userfile" name="userfile" size="20" />
-		</p>
+		</p>		
 		
 		<!--
 		<p class="row2">

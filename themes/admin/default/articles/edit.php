@@ -42,8 +42,25 @@
 			<label for="article_description"><?php echo lang('kb_content'); ?>: <em>(<?php echo lang('kb_required'); ?>)</em></label>
 			<textarea tabindex="5" name="article_description" id="editcontent" cols="35" rows="15" class="inputtext"><?php echo (isset($art->article_description)) ? set_value('article_description', $art->article_description) : set_value('article_description'); ?></textarea>
 		</p>
+        
+		<p class="row1">
+			<label for="userfile"><?php echo lang('kb_attachment'); ?>:</label>
+			<input tabindex="9" type="file" id="userfile" name="userfile" size="20" />
+			<input type="submit" tabindex="11" name="save" class="save" value="<?php echo lang('kb_upload_and_continue'); ?>" />
+		</p>
+		<a name="attachments"></a>
+		<?php if(isset($attach) && $attach->num_rows() > 0): ?>
+		<fieldset>
+			<legend><?php echo $this->lang->line('kb_attachments'); ?></legend>
+
+				<ul>
+			<?php  foreach($attach->result() as $item): ?>
+				<li><?php echo $item->attach_name; ?> <a href="<?php echo site_url('admin/articles/upload_delete/'.$item->attach_id); ?>" onclick="return deleteSomething( 'delete', 'You are about to delete this article?\'.\n\'OK\' to delete, \'Cancel\' to stop.' );">Delete</a> FilePaht:<?php echo $attachment_path.$item->attach_name; ?></li>
+			<?php endforeach; ?>
+				</ul>
+		</fieldset>
+		<?php endif; ?>
 		<?php $this->core_events->trigger('articles/form/description', (isset($art->article_id)) ? $art->article_id : ''); ?>
-		
 		
 		<p class="row2">
 			<label for="article_cat"><?php echo lang('kb_category'); ?>:</label>
@@ -78,24 +95,6 @@
 				<option value="N"<?php if(isset($art->article_display) && $art->article_display == 'N') echo ' selected'; ?>><?php echo lang('kb_no'); ?></option>
 			</select>
 		</p>
-		
-		<p class="row1">
-			<label for="userfile"><?php echo lang('kb_attachment'); ?>:</label>
-			<input tabindex="9" type="file" id="userfile" name="userfile" size="20" />
-		</p>
-		
-		<a name="attachments"></a>
-		<?php if(isset($attach) && $attach->num_rows() > 0): ?>
-		<fieldset>
-			<legend><?php echo $this->lang->line('kb_attachments'); ?></legend>
-
-				<ul>
-			<?php  foreach($attach->result() as $item): ?>
-				<li><?php echo $item->attach_name; ?> <a href="<?php echo site_url('admin/articles/upload_delete/'.$item->attach_id); ?>" onclick="return deleteSomething( 'delete', 'You are about to delete this article?\'.\n\'OK\' to delete, \'Cancel\' to stop.' );">Delete</a> </li>
-			<?php endforeach; ?>
-				</ul>
-		</fieldset>
-		<?php endif; ?>
 		
 		<?php $this->core_events->trigger('articles/form', (isset($art->article_id)) ? $art->article_id : ''); ?>
 		
