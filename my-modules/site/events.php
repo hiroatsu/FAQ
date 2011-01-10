@@ -41,7 +41,6 @@ class site_events
 
 		$template = 'thanks';
 
-		$dir='front';
 		// are we caching?
 		if ($CI->init_model->get_setting('cache_time') > 0)
 		{
@@ -54,7 +53,7 @@ class site_events
 		$data['body'] = $this->load_base_body($template,$data, $useragent,$is_shiftjis);
 		
         // Now check the layout exists
-		$this->load_layout($dir, $data, $useragent,$is_shiftjis);
+		$this->load_layout($data, $useragent,$is_shiftjis);
 		// finally show the last hook
 		$CI->core_events->trigger('display_template');	
 
@@ -83,7 +82,6 @@ class site_events
 		$data = $this->set_most_recent_article_info($data,5);		
 
 		$template = 'home';
-		$dir='front';
 
 		// Cache setting
 		if ($CI->init_model->get_setting('cache_time') > 0)
@@ -95,10 +93,10 @@ class site_events
 		$data = $this->set_siteinfo($useragent,$data);
 
 		// Check the body exists
-		$data = $this->set_body_info($template, $dir, $data, $useragent,$is_shiftjis);
+		$data = $this->set_body_info($template, $data, $useragent,$is_shiftjis);
 		
         // Display page
-		$this->display_composed_page($dir, $data, $useragent,$is_shiftjis);
+		$this->display_composed_page($data, $useragent,$is_shiftjis);
 
 		// finally show the last hook
 		$CI->core_events->trigger('display_template');	
@@ -180,7 +178,6 @@ class site_events
 				$data['thanks'] = $this->get_template_data('thanks', $data, $useragent, false);	
               }
 		$template = 'article';
-		$dir='front';
 		
 		// are we caching?
 		if ($CI->init_model->get_setting('cache_time') > 0)
@@ -188,9 +185,9 @@ class site_events
 			$CI->output->cache($CI->init_model->get_setting('cache_time'));
 		}
 		// set body info
-		$data = $this->set_body_info($template, $dir, $data, $useragent,$is_shiftjis);
+		$data = $this->set_body_info($template,$data, $useragent,$is_shiftjis);
 
-		$this->display_composed_page($dir, $data, $useragent,$is_shiftjis);
+		$this->display_composed_page($data, $useragent,$is_shiftjis);
 		// finally show the last hook
 		$CI->core_events->trigger('display_template');	
 
@@ -278,7 +275,6 @@ class site_events
 				$data['thanks'] = $this->get_template_data('thanks', $data, $useragent, false);	
               }
 		$template = 'article';
-		$dir='front';
 		
 		// are we caching?
 		if ($CI->init_model->get_setting('cache_time') > 0)
@@ -286,9 +282,9 @@ class site_events
 			$CI->output->cache($CI->init_model->get_setting('cache_time'));
 		}
 		// set body info
-		$data = $this->set_body_info($template, $dir, $data, $useragent,$is_shiftjis);
+		$data = $this->set_body_info($template, $data, $useragent,$is_shiftjis);
 
-		$this->display_composed_page($dir, $data, $useragent,$is_shiftjis);
+		$this->display_composed_page($data, $useragent,$is_shiftjis);
 		// finally show the last hook
 		$CI->core_events->trigger('display_template');	
 
@@ -348,7 +344,6 @@ class site_events
 		$data = $this->set_category_tree_info($data);		
 
 		$template = 'category';
-		$dir='front';
 
 		// are we caching?
 		if ($CI->init_model->get_setting('cache_time') > 0)
@@ -357,9 +352,9 @@ class site_events
 		}
 
 		// set body info
-		$data = $this->set_body_info($template, $dir, $data, $useragent,$is_shiftjis);
+		$data = $this->set_body_info($template, $data, $useragent,$is_shiftjis);
 
-		$this->display_composed_page($dir, $data, $useragent,$is_shiftjis);
+		$this->display_composed_page($data, $useragent,$is_shiftjis);
 
 		// finally show the last hook
 		$CI->core_events->trigger('display_template');	
@@ -396,7 +391,6 @@ class site_events
 
 		$template = 'arttag';
 
-		$dir='front';
 		// are we caching?
 		if ($CI->init_model->get_setting('cache_time') > 0)
 		{
@@ -404,9 +398,9 @@ class site_events
 		}
 		
 		// set body info
-		$data = $this->set_body_info($template, $dir, $data, $useragent,$is_shiftjis);
+		$data = $this->set_body_info($template, $data, $useragent,$is_shiftjis);
 
-		$this->display_composed_page($dir, $data, $useragent,$is_shiftjis);
+		$this->display_composed_page($data, $useragent,$is_shiftjis);
 
 		// finally show the last hook
 		$CI->core_events->trigger('display_template');	
@@ -484,7 +478,7 @@ class site_events
 		    			"%' OR article_short_desc LIKE '%" . mysql_real_escape_string($keywords[$i]) .
 		    			"%' OR article_description LIKE '%". mysql_real_escape_string($keywords[$i]) ."%') ";
 		    	}
-		    	$CI->db->where($wherestring,NULL,FALSE);
+		    	$CI->db->where('('.$wherestring.')',NULL,FALSE);
 		    }
 			
 			$CI->db->orderby('article_order', 'DESC');
@@ -505,7 +499,6 @@ class site_events
 		$data = $this->set_category_tree_info($data);
 		$data = $this->set_siteinfo($useragent,$data);
 		$template = 'search';
-		$dir='front';
 
 		// are we caching?
 		if ($CI->init_model->get_setting('cache_time') > 0)
@@ -514,9 +507,9 @@ class site_events
 		}
 		
 		// set body info
-		$data = $this->set_body_info($template, $dir, $data, $useragent,$is_shiftjis);
+		$data = $this->set_body_info($template, $data, $useragent,$is_shiftjis);
 
-		$this->display_composed_page($dir, $data, $useragent,$is_shiftjis);
+		$this->display_composed_page($data, $useragent,$is_shiftjis);
 
 		// finally show the last hook
 		$CI->core_events->trigger('display_template');	
@@ -622,8 +615,9 @@ class site_events
 	 * Load layout Template
 	 *
 	 */
-	function load_layout($dir='front', $data, $useragent, $is_shiftjis)
+	function load_layout($data, $useragent, $is_shiftjis)
 	{
+		$dir='front';
 	    $CI =& get_instance();
 		//$data['settings']=$CI->init_model->settings;
 		//$data['settings']['site_name']=$data['title'];
@@ -678,9 +672,9 @@ class site_events
 		}
 	}
 
-	function display_composed_page($dir, $data, $useragent,$is_shiftjis){
-
-		$this->load_layout($dir, $data, $useragent,$is_shiftjis);
+	function display_composed_page($data, $useragent,$is_shiftjis){
+		
+		$this->load_layout($data, $useragent,$is_shiftjis);
 	}
 
 	function has_rating_reply($data){
@@ -824,7 +818,7 @@ class site_events
 		$data['body'] = $this->load_body($template,$data, $useragent,$is_shiftjis);
 		
         // Now check the layout exists
-		$this->load_layout($dir, $data, $useragent,$is_shiftjis);
+		$this->load_layout($data, $useragent,$is_shiftjis);
 		// finally show the last hook
 		$CI->core_events->trigger('display_template');	
 	}
@@ -1504,7 +1498,7 @@ class site_events
 		return $data;
 	}
 	
-	function set_body_info($template, $dir, $data, $useragent,$is_shiftjis){
+	function set_body_info($template,$data, $useragent,$is_shiftjis){
 
 		$data['body'] = $this->load_base_body($template,$data, $useragent,$is_shiftjis);
 		return $data;	
