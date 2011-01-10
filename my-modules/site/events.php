@@ -66,7 +66,7 @@ class site_events
     function viewtop()
     {
 
-	    $CI =& get_instance();
+	    	$CI =& get_instance();
 		$useragent = $CI->input->user_agent();
 		$is_shiftjis = $this->is_shiftjis($useragent);
 
@@ -429,7 +429,12 @@ class site_events
 		}
 		
 		$category = (int)$CI->input->post('category', TRUE);
-		
+		// searchtype
+		$searchtype = $CI->input->post('searchtype', TRUE);
+		$isOrSearch = false;		
+		if($searchtype !== null &&  $searchtype <> ''  && strCmp(strtolower($searchtype),'or') == 0)
+		$isOrSearch = true;		
+
 		if($input <> '' || $category <> '')
 		{
 			if ($input)
@@ -468,7 +473,11 @@ class site_events
 		    	{
 					if ($i > 0)
 					{
-						$wherestring .= " AND ";
+						if($isOrSearch == true){
+							$wherestring .= " OR ";
+						}else{
+							$wherestring .= " AND ";
+						}
 					}
 					$wherestring = $wherestring .
 		    			" (article_title LIKE '%". mysql_real_escape_string($keywords[$i]) .
@@ -485,6 +494,7 @@ class site_events
 			
 			$data['searchtext'] = $input;
 			$data['category'] = $category;
+			$data['searchtype'] = $searchtype;
 		}else{
 		$data = array();
 		}
